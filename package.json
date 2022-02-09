@@ -1,0 +1,50 @@
+{
+  "name": "diploma",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon -r dotenv/config src/index.js",
+    "test": "jest --watch --detect-open-handles --runInBand",
+    "lint": "eslint --ext js,jsx src",
+    "lint:fix": "eslint --ext js,jsx src --fix",
+    "format": "prettier-eslint --write \"src/**/*.{js,jsx}\""
+  },
+  "type": "module",
+  "jest": {
+    "testEnvironment": "node"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/C010UR/Diploma.git"
+  },
+  "author": "Mikhail Buinouskiy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/C010UR/Diploma/issues"
+  },
+  "homepage": "https://github.com/C010UR/Diploma#readme",
+  "dependencies": {
+    "compression": "^1.7.4",
+    "connect-pg-simple": "^7.0.0",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "express-promise-router": "^4.1.1",
+    "express-session": "^1.17.2",
+    "helmet": "^5.0.2",
+    "jest": "^27.5.1",
+    "morgan": "^1.10.0",
+    "nodemon": "^2.0.15",
+    "pg": "^8.7.3",
+    "supertest": "^6.2.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.8.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.25.4",
+    "eslint-plugin-vue": "^8.4.1",
+    "prettier-eslint": "^8.2.2",
+    "prettier-eslint-cli": "^4.2.1"
+  }
+}
