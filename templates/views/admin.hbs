@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Заявка на ремонт - Администратор</title>
+</head>
+
+<body>
+
+	<style>
+		table {
+			font-family: arial, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		td,
+		th {
+			border: 1px solid #dddddd;
+			text-align: left;
+			padding: 8px;
+		}
+
+		tr:nth-child(even) {
+			background-color: #dddddd;
+		}
+
+		.status-completed {
+			background-color: #1abc9c
+		}
+
+		.status-expired {
+			background-color: #dc3545
+		}
+
+		.status-hour {
+			background-color: #e67e22
+		}
+
+		.status-day {
+			background-color: #f39c12
+		}
+
+		.status-week {
+			background-color: #27ae60
+		}
+
+		.status-none {
+			background-color: #2980b9
+		}
+	</style>
+
+	<table>
+		<tr>
+			<th>Дата создания</th>
+			<th>Дата завершения</th>
+			<th>Статус</th>
+			<th>Кабинет</th>
+			<th>Ф.И.О. Заказчика</th>
+			<th>Телефон заказчика</th>
+			<th>Неисправности</th>
+			<th>Ф.И.О исполнителя</th>
+			<th>Проделанные работы</th>
+			<th>Описание неисправности</th>
+		</tr>
+		{{#each request}}
+		{{#with this}}
+		<tr>
+			<td>{{created_at}}</td>
+			<td>{{done_at}}</td>
+			<td class="{{statusClass}}">{{status}}</td>
+			<td>{{cabinet}}</td>
+			<td>{{client}}</td>
+			<td>{{client_phone}}</td>
+			<td>{{defects}}</td>
+			<td>{{technician}}</td>
+			<td>{{performed_works}}</td>
+			<td>{{defect_description}}</td>
+		</tr>
+		{{/with}}
+		{{/each}}
+	</table>
+</body>
+
+</html>

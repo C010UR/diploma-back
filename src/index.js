@@ -1,21 +1,21 @@
 #!/usr/bin/env/node
 
-/* eslint-disable no-console */
 import app from "./app.js";
+import log from "./logging.js";
 
 const port = process.env.PORT;
 
 try {
   const server = app.listen(port, () => {
-    console.log(`listening on port ${port}`);
+    log("host", "server starting", `Listening on port ${port}`);
   });
   process.on("SIGTERM", () => {
-    console.log("SIGTERM signal received: closing HTTP server");
+    log("host", "server closing", "SIGTERM signal received: closing HTTP server");
     server.close(() => {
-      console.log("HTTP server closed");
+      log("host", "server closed", "HTTP server closed");
     });
   });
 } catch (error) {
-  console.error(error);
+  log("host", "server", error, true);
   process.exit(1);
 }

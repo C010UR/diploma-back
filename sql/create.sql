@@ -47,3 +47,28 @@ ALTER TABLE requests
 	ADD CONSTRAINT pk_requests PRIMARY KEY (_id),
 	ADD CONSTRAINT fk_requests_cabinets FOREIGN KEY (cabinet_id) REFERENCES cabinets (_id),
 	ADD CONSTRAINT fk_requests_urgency FOREIGN KEY (urgency_id) REFERENCES urgency (_id);
+
+CREATE TABLE administrators (
+	_id									uuid DEFAULT gen_random_uuid() NOT NULL,
+	_login							varchar(255) NOT NULL,
+	_pass								varchar(60) NOT NULL,
+	created_at					timestamptz DEFAULT (NOW()) NOT NULL
+);
+
+CREATE INDEX idx_administrators_login ON _login (administrators);
+
+ALTER  TABLE administrators
+	ADD CONSTRAINT pk_administrators PRIMARY KEY (_id),
+	ADD CONSTRAINT u_administrators_login UNIQUE (_login);
+
+CREATE TABLE "session" (
+  "sid" 							varchar NOT NULL COLLATE "default",
+  "sess" 							json NOT NULL,
+  "expire" 						timestamp(6) NOT NULL
+)
+WITH (OIDS=FALSE);
+
+ALTER TABLE "session"
+	ADD CONSTRAINT pk_session PRIMARY KEY ("sid") NOT DEFERRABLE INITIALLY IMMEDIATE;
+
+CREATE INDEX idx_session_expire ON "session" (expire);

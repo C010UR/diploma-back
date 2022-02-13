@@ -17,6 +17,9 @@
     "rules": {
         "quotes": ["error", "double"],
         "comma-dangle": ["error", "never"],
-        "import/extensions": ["error", "ignorePackages"]
+        "import/extensions": ["error", "ignorePackages"],
+        "operator-linebreak": ["error", "after"],
+        "no-underscore-dangle": "off",
+        "no-plusplus": "off"
     }
 }
