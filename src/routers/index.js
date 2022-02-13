@@ -6,7 +6,7 @@ import adminRegister from "./admin-register.js";
 
 export default function mount(app) {
   app.use("/support", request);
-  app.use("/support/admin", adminMain);
+  app.use("/support/dashboard", adminMain);
   app.use("/support/dashboard/login", adminLogin);
   app.use("/support/dashboard/logout", adminLogout);
   app.use("/support/dashboard/register", adminRegister);
