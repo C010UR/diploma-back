@@ -6,6 +6,6 @@ export default function isAuth(req, res, next) {
     next();
   } else {
     log(req.ip, "administrator", "Unsuccessful attempt to authenticate");
-    res.redirect("/support/admin/login");
+    res.redirect("/support/dashboard/login");
   }
 }

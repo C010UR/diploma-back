@@ -11,6 +11,6 @@ router.post("/", async (req, res) => {
       log(req.ip, "session", error, true);
     }
     log(req.ip, "administrator", "Successful logout");
-    res.redirect("/support/admin/login");
+    res.redirect("/support/dashboard/login");
   });
 });
