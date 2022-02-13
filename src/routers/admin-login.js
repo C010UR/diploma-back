@@ -15,10 +15,10 @@ router.post("/", async (req, res) => {
   const { login, password } = req.body;
   const { rows: administrator } = await query(req.ip, "SELECT * FROM administrators WHERE _login = $1", [login]);
   if (administrator.length === 0) {
-    return res.redirect("/support/admin/register");
+    return res.redirect("/support/dashboard/register");
   }
   if (!(await bcrypt.compare(password, administrator[0]._pass))) {
-    return res.redirect("/support/admin/login");
+    return res.redirect("/support/dashboard/login");
   }
   log(req.ip, "administrator", "Successful authorization");
   req.session.isAuth = true;
