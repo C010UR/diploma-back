@@ -2,10 +2,11 @@
 import path from "path";
 // Express
 import express from "express";
-// Useful middleware
+// Other middleware
 import morgan from "morgan";
 import compression from "compression";
 import helmet from "helmet";
+import favicon from "serve-favicon";
 // Process requests
 import bodyParser from "body-parser";
 import multer from "multer";
@@ -26,6 +27,7 @@ const app = express();
 
 // Middleware
 app.use("/static", express.static(path.join(__dirname, "./public")));
+app.use(favicon(path.join(__dirname, "./public/favicon.ico")));
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(upload.array());
