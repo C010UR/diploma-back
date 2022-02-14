@@ -43,6 +43,8 @@ CREATE TABLE requests (
 	done_at							timestamptz
 );
 
+CREATE INDEX idx_requests_created_at ON requests(created_at);
+
 ALTER TABLE requests
 	ADD CONSTRAINT pk_requests PRIMARY KEY (_id),
 	ADD CONSTRAINT fk_requests_cabinets FOREIGN KEY (cabinet_id) REFERENCES cabinets (_id),

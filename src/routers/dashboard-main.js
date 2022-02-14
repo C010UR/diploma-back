@@ -12,6 +12,8 @@ function padStr(i) {
 }
 
 router.get("/", isAuth, async (req, res) => {
+  const page = req.query.page ?? 1;
+  const limit = req.query.limit ?? 50;
   const { rows: data } = await query(
     req.ip,
     ` SELECT 
@@ -19,7 +21,10 @@ router.get("/", isAuth, async (req, res) => {
         performed_works, client, client_phone, defects, defect_description, created_at, done_at
       FROM requests
       JOIN urgency ON (requests.urgency_id = urgency._id)
-      JOIN cabinets ON (requests.cabinet_id = cabinets._id)`
+      JOIN cabinets ON (requests.cabinet_id = cabinets._id)
+      WHERE requests_pos(created_at) >= $1 AND requests_pos(created_at) < $1 + $2
+      ORDER BY created_at DESC`,
+    [1 + (page - 1) * limit, limit]
   );
   for (let i = 0; i < data.length; i++) {
     if (data[i].technician !== null) {
@@ -50,14 +55,16 @@ router.get("/", isAuth, async (req, res) => {
       `${padStr(createdAt.getHours())}:${padStr(createdAt.getMinutes())}`;
     if (data[i].done_at) {
       const doneAt = data[i].done_at;
-      data[i].created_at =
+      data[i].done_at =
         `${padStr(doneAt.getFullYear())}-${padStr(doneAt.getMonth())}-${padStr(doneAt.getDate())} ` +
         `${padStr(doneAt.getHours())}:${padStr(doneAt.getMinutes())}`;
     }
   }
 
   res.render("dashboard", {
-    request: data
+    request: data,
+    page,
+    limit
   });
 });
 
@@ -70,7 +77,7 @@ router.post("/", isAuth, async (req, res) => {
     await query(
       req.ip,
       ` UPDATE requests
-        SET technician = $2, performed_works = $3
+        SET done_at = NOW(), technician = $2, performed_works = $3
         WHERE _id = $1`,
       request
     );

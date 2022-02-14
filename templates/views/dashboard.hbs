@@ -86,6 +86,11 @@
 		{{/with}}
 		{{/each}}
 	</table>
+	<form method="get" action="/support/dashboard">
+		<input type="text" name="limit" value="{{limit}}">
+		<input type="text" name="page" value="{{page}}">
+		<input type="submit" value="ok">
+	</form>
 </body>
 
 </html>
