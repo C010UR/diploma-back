@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
       log(req.ip, "sql", error, true);
       return res.status(400).end();
     }
-    log(req.ip, "administrator", `Successful registration of ${login}`, true);
+    log(req.ip, "dashboard", `Successful registration of ${login}`, true);
     return res.redirect("/support/dashboard/login");
   }
   return res.redirect("/support/dashboard/register");

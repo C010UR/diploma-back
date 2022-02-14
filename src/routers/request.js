@@ -18,7 +18,6 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
   const request = Object.keys(req.body).map((key) => req.body[key]);
-  request.pop();
   try {
     await query(
       req.ip,

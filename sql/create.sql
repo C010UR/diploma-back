@@ -55,7 +55,7 @@ CREATE TABLE administrators (
 	created_at					timestamptz DEFAULT (NOW()) NOT NULL
 );
 
-CREATE INDEX idx_administrators_login ON _login (administrators);
+CREATE INDEX idx_administrators_login ON administrators (_login);
 
 ALTER  TABLE administrators
 	ADD CONSTRAINT pk_administrators PRIMARY KEY (_id),

@@ -20,7 +20,7 @@ router.post("/", async (req, res) => {
   if (!(await bcrypt.compare(password, administrator[0]._pass))) {
     return res.redirect("/support/dashboard/login");
   }
-  log(req.ip, "administrator", "Successful authorization");
+  log(req.ip, "dashboard", "Successful authorization");
   req.session.isAuth = true;
-  return res.redirect("/support/admin");
+  return res.redirect("/support/dashboard");
 });

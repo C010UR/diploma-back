@@ -62,9 +62,9 @@
 			<th>Ф.И.О. Заказчика</th>
 			<th>Телефон заказчика</th>
 			<th>Неисправности</th>
+			<th>Описание неисправности</th>
 			<th>Ф.И.О исполнителя</th>
 			<th>Проделанные работы</th>
-			<th>Описание неисправности</th>
 		</tr>
 		{{#each request}}
 		{{#with this}}
@@ -76,9 +76,12 @@
 			<td>{{client}}</td>
 			<td>{{client_phone}}</td>
 			<td>{{defects}}</td>
-			<td>{{technician}}</td>
-			<td>{{performed_works}}</td>
 			<td>{{defect_description}}</td>
+			<form method="post" action="/support/dashboard" id="{{_id}}"><input type="hidden" name="_id" value="{{_id}}" />
+			</form>
+			<td><input form="{{_id}}" type="text" name="technician" value="{{technician}}"></td>
+			<td><input form="{{_id}}" type="text" name="performed_works" value="{{performed_works}}"></td>
+			<td><input form="{{_id}}" type="submit" value="Сохранить"></td>
 		</tr>
 		{{/with}}
 		{{/each}}

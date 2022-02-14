@@ -1,6 +1,7 @@
 import Router from "express-promise-router";
 import isAuth from "../middleware/auth.js";
 import query from "../db/query.js";
+import log from "../logging.js";
 
 const router = new Router();
 
@@ -14,7 +15,7 @@ router.get("/", isAuth, async (req, res) => {
   const { rows: data } = await query(
     req.ip,
     ` SELECT 
-        (urgency._interval + created_at) AS status, cabinets._field AS cabinet, technician, 
+        requests._id, (urgency._interval + created_at) AS status, cabinets._field AS cabinet, technician, 
         performed_works, client, client_phone, defects, defect_description, created_at, done_at
       FROM requests
       JOIN urgency ON (requests.urgency_id = urgency._id)
@@ -55,7 +56,26 @@ router.get("/", isAuth, async (req, res) => {
     }
   }
 
-  res.render("admin", {
+  res.render("dashboard", {
     request: data
   });
+});
+
+router.post("/", isAuth, async (req, res) => {
+  const request = Object.keys(req.body).map((key) => req.body[key]);
+  for (let i = 0; i < request.length; i++) {
+    request[i] = request[i] === "" ? null : request[i];
+  }
+  try {
+    await query(
+      req.ip,
+      ` UPDATE requests
+        SET technician = $2, performed_works = $3
+        WHERE _id = $1`,
+      request
+    );
+  } catch (error) {
+    log(req.ip, "sql", error, true);
+  }
+  res.redirect("/support/dashboard");
 });
