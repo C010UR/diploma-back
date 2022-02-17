@@ -1,6 +1,8 @@
 import Router from "express-promise-router";
 import query from "../db/query.js";
 import log from "../logging.js";
+// eslint-disable-next-line import/no-cycle
+import { io } from "../app.js";
 
 const router = new Router();
 
@@ -22,11 +24,12 @@ router.post("/", async (req, res) => {
     await query(
       req.ip,
       ` INSERT INTO requests (client, client_phone, urgency_id, cabinet_id, defects, defect_description) 
-        VALUES ($1, $2, $3, $4, $5, $6)`,
+        VALUES ($1, $2, $3, $4, $5, $6) RETURNING _id`,
       request
     );
   } catch (error) {
     log(req.ip, "sql", error, true);
   }
+  io.to("dashboard").emit("row:new", true);
   res.redirect("/support");
 });

@@ -22,9 +22,10 @@ router.get("/", isAuth, async (req, res) => {
       FROM requests
       JOIN urgency ON (requests.urgency_id = urgency._id)
       JOIN cabinets ON (requests.cabinet_id = cabinets._id)
-      WHERE requests_pos(created_at) >= $1 AND requests_pos(created_at) < $1 + $2
-      ORDER BY created_at DESC`,
-    [1 + (page - 1) * limit, limit]
+      ORDER BY created_at DESC
+      LIMIT $2
+      OFFSET $1`, // LIMIT OFFSET is bad but i'm too lazy and there will not be millions of rows
+    [(page - 1) * limit, limit]
   );
   for (let i = 0; i < data.length; i++) {
     if (data[i].technician !== null) {
@@ -60,7 +61,6 @@ router.get("/", isAuth, async (req, res) => {
         `${padStr(doneAt.getHours())}:${padStr(doneAt.getMinutes())}`;
     }
   }
-
   res.render("dashboard", {
     request: data,
     page,

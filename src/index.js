@@ -1,6 +1,6 @@
 #!/usr/bin/env/node
 
-import app from "./app.js";
+import { server as app } from "./app.js";
 import log from "./logging.js";
 
 const port = process.env.PORT;

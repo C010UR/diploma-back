@@ -5,7 +5,7 @@ const router = new Router();
 
 export default router;
 
-router.post("/", async (req, res) => {
+router.get("/", async (req, res) => {
   req.session.destroy((error) => {
     if (error) {
       log(req.ip, "session", error, true);

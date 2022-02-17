@@ -6,53 +6,10 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>Заявка на ремонт - Администратор</title>
+	<link rel="stylesheet" href="/static/css/dashboard.css">
 </head>
 
 <body>
-
-	<style>
-		table {
-			font-family: arial, sans-serif;
-			border-collapse: collapse;
-			width: 100%;
-		}
-
-		td,
-		th {
-			border: 1px solid #dddddd;
-			text-align: left;
-			padding: 8px;
-		}
-
-		tr:nth-child(even) {
-			background-color: #dddddd;
-		}
-
-		.status-completed {
-			background-color: #1abc9c
-		}
-
-		.status-expired {
-			background-color: #dc3545
-		}
-
-		.status-hour {
-			background-color: #e67e22
-		}
-
-		.status-day {
-			background-color: #f39c12
-		}
-
-		.status-week {
-			background-color: #27ae60
-		}
-
-		.status-none {
-			background-color: #2980b9
-		}
-	</style>
-
 	<table>
 		<tr>
 			<th>Дата создания</th>
@@ -62,9 +19,6 @@
 			<th>Ф.И.О. Заказчика</th>
 			<th>Телефон заказчика</th>
 			<th>Неисправности</th>
-			<th>Описание неисправности</th>
-			<th>Ф.И.О исполнителя</th>
-			<th>Проделанные работы</th>
 		</tr>
 		{{#each request}}
 		{{#with this}}
@@ -72,16 +26,22 @@
 			<td>{{created_at}}</td>
 			<td>{{done_at}}</td>
 			<td class="{{statusClass}}">{{status}}</td>
-			<td>{{cabinet}}</td>
-			<td>{{client}}</td>
-			<td>{{client_phone}}</td>
-			<td>{{defects}}</td>
-			<td>{{defect_description}}</td>
+			<td class="row-to-click">{{cabinet}}</td>
+			<td class="row-to-click">{{client}}</td>
+			<td class="row-to-click">{{client_phone}}</td>
+			<td class="row-to-click">{{defects}}</td>
+			<td class="row-1 row-to-expand hide-row">Описание неисправности:<br>{{defect_description}}</td>
 			<form method="post" action="/support/dashboard" id="{{_id}}"><input type="hidden" name="_id" value="{{_id}}" />
 			</form>
-			<td><input form="{{_id}}" type="text" name="technician" value="{{technician}}"></td>
-			<td><input form="{{_id}}" type="text" name="performed_works" value="{{performed_works}}"></td>
-			<td><input form="{{_id}}" type="submit" value="Сохранить"></td>
+			<td class="row-2 row-to-expand hide-row">
+				Ф.И.О исполнителя:
+				<input form="{{_id}}" type="text" name="technician" id="technician" value="{{technician}}">
+				<input form="{{_id}}" type="submit" id="submit" value="Сохранить">
+				<br>
+				Проделанные работы:
+				<br>
+				<textarea form="{{_id}}" name="performed_works" id="performed_works" value="{{performed_works}}"></textarea>
+			</td>
 		</tr>
 		{{/with}}
 		{{/each}}
@@ -91,6 +51,8 @@
 		<input type="text" name="page" value="{{page}}">
 		<input type="submit" value="ok">
 	</form>
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="/static/js/dashboard.js"></script>
 </body>
 
 </html>
