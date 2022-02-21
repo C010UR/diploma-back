@@ -1,4 +1,5 @@
 import Router from "express-promise-router";
+import validator from "validator";
 import isAuth from "../middleware/auth.js";
 import query from "../db/query.js";
 import log from "../logging.js";
@@ -35,30 +36,24 @@ router.get("/table", isAuth, async (req, res) => {
     );
     for (let i = 0; i < data.length; i++) {
       if (data[i].technician !== null) {
-        data[i].status = "Выполнено";
-        data[i].statusClass = "status-completed";
+        data[i].status = "status-completed";
       } else {
         const status = (data[i].status - new Date()) / 3600000; // divide by an hour
         if (status < 0) {
-          data[i].status = "Просрочено";
-          data[i].statusClass = "status-expired";
+          data[i].status = "status-expired";
         } else if (status <= 1) {
-          data[i].status = "< часа";
-          data[i].statusClass = "status-hour";
+          data[i].status = "status-hour";
         } else if (status <= 24) {
-          data[i].status = "< дня";
-          data[i].statusClass = "status-day";
+          data[i].status = "status-day";
         } else if (status <= 168) {
-          data[i].status = "< недели";
-          data[i].statusClass = "status-week";
+          data[i].status = "status-week";
         } else {
-          data[i].status = "> недели";
-          data[i].statusClass = "status-none";
+          data[i].status = "status-none";
         }
       }
       data[i].created_at = dateToStr(data[i].created_at);
       if (data[i].done_at) {
-        data[i].done_at = dateToStr(data[i].created_at);
+        data[i].done_at = dateToStr(data[i].done_at);
       }
     }
     return res.status(200).send(data);
@@ -70,10 +65,10 @@ router.get("/table", isAuth, async (req, res) => {
 
 router.patch("/table", isAuth, async (req, res) => {
   const form = req.body;
-  if (!(form.id && form.technician && form.performed_works)) {
+  if (!(form._id && validator.isUUID(form._id, 4) && form.technician && form.performed_works)) {
     return res.status(400).end();
   }
-  const request = [form.id, form.technician, form.performed_works];
+  const request = [form._id, form.technician, form.performed_works];
   try {
     await query(
       req.ip,

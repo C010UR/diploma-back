@@ -1,5 +1,6 @@
 import Router from "express-promise-router";
 import bcrypt from "bcryptjs";
+import validator from "validator";
 import query from "../db/query.js";
 import log from "../logging.js";
 
@@ -10,7 +11,11 @@ export default router;
 router.post("/register", async (req, res) => {
   const { login, password, secret_key: secretKey } = req.body;
   // validate input
-  if (!(login && password && secretKey) || secretKey !== process.env.SECRET_KEY) {
+  if (
+    !(login && password && secretKey) ||
+    secretKey !== process.env.SECRET_KEY ||
+    !validator.isStrongPassword(password)
+  ) {
     return res.status(400).end();
   }
   const hashedPassword = await bcrypt.hash(password, 8);
@@ -51,7 +56,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/logout", async (req, res) => {
+router.post("/logout", async (req, res) => {
   req.session.destroy((error) => {
     if (error) {
       log(req.ip, "session", error, true);

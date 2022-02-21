@@ -1,5 +1,5 @@
 import Router from "express-promise-router";
-import isUUID from "validator/lib/isUUID";
+import validator from "validator";
 import query from "../db/query.js";
 import log from "../logging.js";
 // eslint-disable-next-line import/no-cycle
@@ -36,9 +36,9 @@ router.post("/", async (req, res) => {
     !(
       form.client_name &&
       form.urgency &&
-      isUUID(form.urgency, 4) &&
+      validator.isUUID(form.urgency, 4) &&
       form.cabinet &&
-      isUUID(form.cabinet, 4) &&
+      validator.isUUID(form.cabinet, 4) &&
       form.defects
     )
   ) {
