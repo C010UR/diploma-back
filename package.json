@@ -41,7 +41,8 @@
     "multer": "^1.4.4",
     "pg": "^8.7.3",
     "serve-favicon": "^2.5.0",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.4.1",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "eslint": "^8.8.0",

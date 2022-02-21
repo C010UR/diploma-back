@@ -53,8 +53,11 @@ io.on("connection", (socket) => {
   socket.on("disconnect", () => {
     log(socket.handshake.address, "Socket.IO", `User ${socket.id} disconnected`);
   });
+
   if (socket.request.session.isAuth) {
     socket.join("dashboard");
+  } else {
+    socket.disconnect();
   }
 });
 

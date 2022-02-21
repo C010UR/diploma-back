@@ -1,13 +1,12 @@
+// eslint-disable-next-line import/no-cycle
 import request from "./request.js";
-import dashboardMain from "./dashboard-main.js";
-import dashboardLogin from "./dashboard-login.js";
-import dashboardLogout from "./dashboard-logout.js";
-import dashboardRegister from "./dashboard-register.js";
+import dashboard from "./dashboard-main.js";
+import dashboardAuth from "./dashboard-auth.js";
+
+const path = "/support/api";
 
 export default function mount(app) {
-  app.use("/support", request);
-  app.use("/support/dashboard", dashboardMain);
-  app.use("/support/dashboard/login", dashboardLogin);
-  app.use("/support/dashboard/logout", dashboardLogout);
-  app.use("/support/dashboard/register", dashboardRegister);
+  app.use(`${path}/request`, request);
+  app.use(`${path}/dashboard`, dashboard);
+  app.use(`${path}/dashboard/auth`, dashboardAuth);
 }
