@@ -6,6 +6,6 @@ export default function isAuth(req, res, next) {
     next();
   } else {
     log(req.ip, "dashboard", "Unsuccessful attempt to authenticate");
-    res.redirect("/support/dashboard/login");
+    res.status(401).end();
   }
 }

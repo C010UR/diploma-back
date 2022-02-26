@@ -24,11 +24,12 @@ router.get("/table", isAuth, async (req, res) => {
     const { rows: data } = await query(
       req.ip,
       ` SELECT 
-          requests._id, (urgency._interval + created_at) AS status, cabinets._field AS cabinet, technician, 
+          requests._id, (urgency._interval + created_at) AS status, cabinets._field AS cabinet, technicians._field AS technician, 
           performed_works, client, client_phone, defects, defect_description, created_at, done_at
         FROM requests
         JOIN urgency ON (requests.urgency_id = urgency._id)
         JOIN cabinets ON (requests.cabinet_id = cabinets._id)
+        LEFT JOIN technicians ON (requests.technician_id = technicians._id)
         ORDER BY created_at DESC
         LIMIT $2
         OFFSET $1`, // LIMIT OFFSET is bad but i'm too lazy and there will not be millions of rows
@@ -65,15 +66,25 @@ router.get("/table", isAuth, async (req, res) => {
 
 router.patch("/table", isAuth, async (req, res) => {
   const form = req.body;
-  if (!(form._id && validator.isUUID(form._id, 4) && form.technician && form.performed_works)) {
+  // validate input
+  if (
+    !(
+      form._id &&
+      validator.isUUID(form._id, 4) &&
+      form.technician_id &&
+      validator.isUUID(form.technician_id, 4) &&
+      form.performed_works
+    )
+  ) {
     return res.status(400).end();
   }
-  const request = [form._id, form.technician, form.performed_works];
+  // convert input to an array
+  const request = [form._id, form.technician_id, form.performed_works];
   try {
     await query(
       req.ip,
       ` UPDATE requests
-        SET done_at = NOW(), technician = $2, performed_works = $3
+        SET done_at = NOW(), technician_id = $2, performed_works = $3
         WHERE _id = $1`,
       request
     );

@@ -15,14 +15,3 @@ BEGIN
 	END LOOP;
 END;
 $$ LANGUAGE plpgsql;
-
-
-CREATE OR REPLACE FUNCTION requests_pos (timestamptz)
-RETURNS bigint
-AS 'SELECT COUNT(created_at) FROM requests WHERE created_at >= $1'
-LANGUAGE sql IMMUTABLE;
-
-SELECT requests_pos(created_at), created_at
-FROM requests
-
-CREATE INDEX idx_requests_requests_pos_of_created_at ON requests USING btree(requests_pos(created_at));
