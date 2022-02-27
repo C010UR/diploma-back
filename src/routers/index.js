@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-cycle
 import request from "./request.js";
-import dashboard from "./dashboard-main.js";
-import dashboardAuth from "./dashboard-auth.js";
+import dashboard from "./main.dashboard.js";
+import dashboardAuth from "./auth.dashboard.js";
 
 const path = "/support/api";
 

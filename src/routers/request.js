@@ -35,7 +35,7 @@ router.get("/cabinets", async (req, res) => {
   }
 });
 
-router.get("/commonDefects", async (req, res) => {
+router.get("/defects", async (req, res) => {
   try {
     const { rows: defects } = await query(req.ip, "SELECT _field FROM common_defects OFFSET 1");
     const result = defects.map((obj) => obj._field);

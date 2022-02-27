@@ -17,6 +17,20 @@ function dateToStr(date) {
   return `${padStr(date.getFullYear())}-${padStr(date.getMonth())}-${padStr(date.getDate())} ${padStr(date.getHours())}:${padStr(date.getMinutes())}`;
 }
 
+router.get("/table/count", isAuth, async (req, res) => {
+  try {
+    const { rows } = await query(
+      req.ip,
+      ` SELECT COUNT(*)
+        FROM requests`
+    );
+    return res.status(200).send(rows[0]);
+  } catch (error) {
+    log(req.ip, "sql", error, true);
+    return res.status(500).end();
+  }
+});
+
 router.get("/table", isAuth, async (req, res) => {
   const page = req.query.page ?? 1;
   const limit = req.query.limit ?? 50;
