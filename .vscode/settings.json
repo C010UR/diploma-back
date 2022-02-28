@@ -1,8 +1,0 @@
-{
-  "prettier.eslintIntegration": true,
-  "editor.formatOnSave": true,
-  "cSpell.words": [
-    "звука",
-    "работает"
-  ]
-}

@@ -40,13 +40,10 @@ const middleware = [
   cors({ allowedHeaders: "Content-Type, Cache-Control" })
 ];
 
-app.use("/static", express.static(path.join(__dirname, "./public")));
+app.use("/public", express.static(path.join(__dirname, "./public/")));
 app.use(middleware);
 
 mountRoutes(app);
-
-app.set("view engine", "hbs");
-app.set("views", path.join(__dirname, "./templates/views"));
 
 const io = new Server(server, {});
 

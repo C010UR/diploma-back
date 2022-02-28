@@ -8,11 +8,7 @@
     "start": "node -r dotenv/config src/index.js",
     "dev": "nodemon -r dotenv/config src/index.js",
     "test": "jest --watch --detect-open-handles --runInBand",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --ignore-path .gitignore",
-    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
-    "format": "prettier-eslint --write \"src/**/*.{js,jsx}\"",
-    "check": "npm-check -s --no-emoji",
-    "check:update": "npm-check -y"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "type": "module",
   "jest": {
