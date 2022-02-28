@@ -7,7 +7,6 @@ import express from "express";
 import morgan from "morgan";
 import compression from "compression";
 import helmet from "helmet";
-import favicon from "serve-favicon";
 import cors from "cors";
 // Process requests
 import bodyParser from "body-parser";
@@ -30,7 +29,6 @@ const middleware = [
   morgan(
     "[:date[iso]] client: :remote-addr\nHTTP - :remote-user :method :url HTTP/:http-version :status :res[content-length]\n"
   ),
-  favicon(path.join(__dirname, "./public/favicon.ico")),
   express.json(),
   bodyParser.urlencoded({ extended: true }),
   upload.array(),
