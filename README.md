@@ -2,19 +2,25 @@
 
 Backend is written in NodeJS with Express, Knex.js and other libraries. The selected database is PostgreSQL.
 
-## Usage
-
-Use the package manager [pnpm](https://pnpm.io/) to run the diplomas' backend.
-
+## Project setup
+Use the package manager [pnpm](https://pnpm.io/) to setup the diplomas' frontend.
 ```bash
-# to run production build use
+pnpm install
+```
+
+## Usage
+```bash
+# Runs production build
 pnpm start
 
-# to run development build use
+# Runs development build
 pnpm dev
 
-# to test the program use
+# Tests the program
 pnpm test
+
+# Lints and fixes files
+pnpm lint
 ```
 
 ## Contributing
