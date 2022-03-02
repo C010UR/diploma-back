@@ -1,6 +1,6 @@
 import path from "path";
 import Router from "express-promise-router";
-import log from "../logging.js";
+import { log } from "../log.js";
 
 const __dirname = path.resolve();
 

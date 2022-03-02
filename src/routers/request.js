@@ -1,7 +1,7 @@
 import Router from "express-promise-router";
 import validator from "validator";
-import query from "../db/query.js";
-import log from "../logging.js";
+import knex from "../db/knex.js";
+import { log } from "../log.js";
 
 const router = new Router();
 
@@ -9,11 +9,13 @@ export default router;
 
 router.get("/urgency", async (req, res) => {
   try {
-    const { rows: urgency } = await query(
-      req.ip,
-      "SELECT _id AS value, _field AS label FROM urgency OFFSET 1"
-    );
-    res.status(200).send(urgency);
+    const data = await knex("urgency")
+      .select({
+        value: "_id",
+        label: "_field"
+      })
+      .offset(1);
+    res.status(200).send(data);
   } catch (error) {
     log(req.ip, "sql", error, true);
     res.status(500).end();
@@ -22,11 +24,13 @@ router.get("/urgency", async (req, res) => {
 
 router.get("/cabinets", async (req, res) => {
   try {
-    const { rows: cabinets } = await query(
-      req.ip,
-      "SELECT _id AS value, _field AS label FROM cabinets OFFSET 1"
-    );
-    res.status(200).send(cabinets);
+    const data = await knex("cabinets")
+      .select({
+        value: "_id",
+        label: "_field"
+      })
+      .offset(1);
+    res.status(200).send(data);
   } catch (error) {
     log(req.ip, "sql", error, true);
     res.status(500).end();
@@ -35,8 +39,8 @@ router.get("/cabinets", async (req, res) => {
 
 router.get("/defects", async (req, res) => {
   try {
-    const { rows: defects } = await query(req.ip, "SELECT _field FROM common_defects OFFSET 1");
-    const result = defects.map((obj) => obj._field);
+    const data = await knex("common_defects").select("_field").offset(1);
+    const result = data.map((obj) => obj._field);
     res.status(200).send(result);
   } catch (error) {
     log(req.ip, "sql", error, true);
@@ -61,23 +65,16 @@ router.post("/", async (req, res) => {
   ) {
     return res.status(400).end();
   }
-  // convert input to an array
-  const request = [
-    form.client_name,
-    form.client_phone ?? "",
-    form.urgency,
-    form.cabinet,
-    form.defects,
-    form.defect_description ?? ""
-  ];
 
   try {
-    await query(
-      req.ip,
-      ` INSERT INTO requests (client, client_phone, urgency_id, cabinet_id, defects, defect_description) 
-        VALUES ($1, $2, $3, $4, $5, $6) RETURNING _id`,
-      request
-    );
+    await knex("requests").insert({
+      client: form.client_name,
+      client_phone: form.client_phone,
+      urgency_id: form.urgency,
+      cabinet_id: form.cabinet,
+      defects: form.defects,
+      defect_description: form.defect_description
+    });
   } catch (error) {
     log(req.ip, "sql", error, true);
     return res.status(500).end();

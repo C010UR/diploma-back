@@ -1,8 +1,8 @@
 import Router from "express-promise-router";
 import bcrypt from "bcryptjs";
 import validator from "validator";
-import query from "../db/query.js";
-import log from "../logging.js";
+import knex from "../db/knex.js";
+import { log } from "../log.js";
 import isAuth from "../middleware/auth.js";
 
 const router = new Router();
@@ -21,10 +21,14 @@ router.post("/register", async (req, res) => {
   }
   const hashedPassword = await bcrypt.hash(password, 8);
   try {
-    await query(req.ip, "INSERT INTO administrators (_login, _pass) VALUES ($1, $2)", [
-      login,
-      hashedPassword
-    ]);
+    await knex("administrators").insert({
+      _login: login,
+      _pass: hashedPassword
+    });
+    // await query(req.ip, "INSERT INTO administrators (_login, _pass) VALUES ($1, $2)", [
+    //   login,
+    //   hashedPassword
+    // ]);
     log(req.ip, "dashboard", `Successful registration of ${login}`, true);
     return res.status(201).send(login);
   } catch (error) {
@@ -40,12 +44,13 @@ router.post("/login", async (req, res) => {
     return res.status(404).end();
   }
   try {
-    const { rows: administrator } = await query(
-      req.ip,
-      "SELECT * FROM administrators WHERE _login = $1",
-      [login]
-    );
-    if (administrator.length === 0 || !(await bcrypt.compare(password, administrator[0]._pass))) {
+    const administratorPassword = await knex("administrators")
+      .select("_pass")
+      .where("_login", login);
+    if (
+      administratorPassword.length === 0 ||
+      !(await bcrypt.compare(password, administratorPassword[0]._pass))
+    ) {
       return res.status(404).end();
     }
     log(req.ip, "dashboard", "Successful authorization");

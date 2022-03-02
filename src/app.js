@@ -16,7 +16,7 @@ import session from "express-session";
 import pgSession from "connect-pg-simple";
 // Local modules
 import mountRoutes from "./routers/index.js";
-import log from "./logging.js";
+import { log, dateToStr } from "./log.js";
 import pool from "./db/pool.js";
 
 const __dirname = path.resolve();
@@ -38,9 +38,11 @@ const sessionMiddleware = session({
   cookie: { maxAge: 2592000000 } // 30 days
 });
 
+morgan.token("time", () => dateToStr(new Date()));
+
 const middleware = [
   morgan(
-    "[:date[iso]] Client: :remote-addr | HTTP\n:remote-user :method :url HTTP/:http-version :status :res[content-length]\n"
+    "[:time] Address - :remote-addr | HTTP\n:remote-user :method :url HTTP/:http-version :status :res[content-length]\n"
   ),
   express.json(),
   bodyParser.urlencoded({ extended: true }),

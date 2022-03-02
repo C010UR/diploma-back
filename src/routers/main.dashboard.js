@@ -1,21 +1,47 @@
 import Router from "express-promise-router";
 import validator from "validator";
 import isAuth from "../middleware/auth.js";
-import query from "../db/query.js";
-import log from "../logging.js";
+import knex from "../db/knex.js";
+import { log } from "../log.js";
 
 const router = new Router();
 
 export default router;
 
+function filterBuilder(builder, filters) {
+  if (!filters) return;
+  filters.forEach((filter) => {
+    if (!filter.column || !filter.value) return;
+    if (filter.operator) {
+      switch (filter.operator.toLowerCase()) {
+        case "between":
+          builder.whereBetween(filter.column, filter.value);
+          break;
+        case "like":
+          builder.whereILike(filter.column, `%${filter.value}%`);
+          break;
+        case ">":
+        case "<":
+        case ">=":
+        case "<=":
+          builder.where(filter.column, filter.operator, filter.value);
+          break;
+        default:
+          builder.where(filter.column, filter.value);
+      }
+    } else {
+      builder.where(filter.column, filter.value);
+    }
+  });
+}
+
 router.get("/table/count", isAuth, async (req, res) => {
   try {
-    const { rows } = await query(
-      req.ip,
-      ` SELECT COUNT(*)
-        FROM requests`
-    );
-    return res.status(200).send(rows[0]);
+    const data = await knex("view_requests")
+      .count()
+      .table("requests")
+      .where((builder) => filterBuilder(builder, req.body.filters));
+    return res.status(200).send(data);
   } catch (error) {
     log(req.ip, "sql", error, true);
     return res.status(400).end();
@@ -23,42 +49,31 @@ router.get("/table/count", isAuth, async (req, res) => {
 });
 
 router.get("/table", isAuth, async (req, res) => {
-  const page = req.query.page ?? 1;
-  const limit = req.query.limit ?? 50;
+  const page = req.body.page ?? 1;
+  const limit = req.body.limit ?? 50;
+  const orderBy =
+    req.body.orderBy && req.body.orderBy.toLowerCase() === "status" ? "status" : "created_at";
+  const orderDirection =
+    req.body.orderDirection && req.body.orderDirection.toLowerCase() === "asc" ? "asc" : "desc";
   try {
-    const { rows: data } = await query(
-      req.ip,
-      ` SELECT 
-          requests._id, (urgency._interval + created_at) AS status, cabinets._field AS cabinet, technicians._field AS technician, 
-          performed_works, client, client_phone, defects, defect_description, created_at, done_at
-        FROM requests
-        JOIN urgency ON (requests.urgency_id = urgency._id)
-        JOIN cabinets ON (requests.cabinet_id = cabinets._id)
-        LEFT JOIN technicians ON (requests.technician_id = technicians._id)
-        ORDER BY created_at DESC
-        LIMIT $2
-        OFFSET $1`, // LIMIT OFFSET is bad but i'm too lazy and there will not be thousands of rows
-      [(page - 1) * limit, limit]
-    );
-    for (let i = 0; i < data.length; i++) {
-      if (data[i].technician !== null) {
-        data[i].status = "status-completed";
-      } else {
-        const status = (data[i].status - new Date()) / 3600000; // divide by an hour
-        if (status < 0) {
-          data[i].status = "status-expired";
-        } else if (status <= 1) {
-          data[i].status = "status-hour";
-        } else if (status <= 24) {
-          data[i].status = "status-day";
-        } else if (status <= 168) {
-          data[i].status = "status-week";
-        } else {
-          data[i].status = "status-none";
-        }
-      }
-    }
-    return res.status(200).send(data);
+    const data = await knex("view_requests")
+      .select(
+        "_id",
+        "status",
+        "cabinet",
+        "technician_id",
+        "performed_works",
+        "client",
+        "client_phone",
+        "defects",
+        "defect_description",
+        "created_at",
+        "done_at"
+      )
+      .where((builder) => filterBuilder(builder, req.body.filters))
+      .orderBy(orderBy, orderDirection)
+      .paginate({ perPage: limit, currentPage: page });
+    return res.status(200).send(data.data);
   } catch (error) {
     log(req.ip, "sql", error, true);
     return res.status(400).end();
@@ -70,8 +85,8 @@ router.patch("/table", isAuth, async (req, res) => {
   // validate input
   if (
     !(
-      form._id &&
-      validator.isUUID(form._id, 4) &&
+      form.id &&
+      validator.isUUID(form.id, 4) &&
       form.technician_id &&
       validator.isUUID(form.technician_id, 4) &&
       form.performed_works
@@ -79,16 +94,14 @@ router.patch("/table", isAuth, async (req, res) => {
   ) {
     return res.status(400).end();
   }
-  // convert input to an array
-  const request = [form._id, form.technician_id, form.performed_works];
   try {
-    await query(
-      req.ip,
-      ` UPDATE requests
-        SET done_at = NOW(), technician_id = $2, performed_works = $3
-        WHERE _id = $1`,
-      request
-    );
+    await await knex("requests")
+      .update({
+        done_at: "NOW()",
+        technician_id: form.technician_id,
+        performed_works: form.performed_works
+      })
+      .where("_id", form.id);
     return res.status(200).send(form);
   } catch (error) {
     log(req.ip, "sql", error, true);

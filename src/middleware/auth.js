@@ -1,4 +1,4 @@
-import log from "../logging.js";
+import { log } from "../log.js";
 
 export default function isAuth(req, res, next) {
   if (req.session.isAuth) {
