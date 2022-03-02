@@ -2,8 +2,6 @@ import Router from "express-promise-router";
 import validator from "validator";
 import query from "../db/query.js";
 import log from "../logging.js";
-// eslint-disable-next-line import/no-cycle
-import { io } from "../app.js";
 
 const router = new Router();
 
@@ -84,6 +82,5 @@ router.post("/", async (req, res) => {
     log(req.ip, "sql", error, true);
     return res.status(500).end();
   }
-  io.to("dashboard").emit("row:new", true);
   return res.status(201).send(form);
 });

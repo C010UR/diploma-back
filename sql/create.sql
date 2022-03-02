@@ -72,13 +72,22 @@ CREATE TABLE requests (
 	done_at							timestamptz
 );
 
-CREATE INDEX idx_requests_created_at ON requests(created_at);
-
 ALTER TABLE requests
 	ADD CONSTRAINT pk_requests PRIMARY KEY (_id),
 	ADD CONSTRAINT fk_requests_cabinets FOREIGN KEY (cabinet_id) REFERENCES cabinets (_id) ON DELETE SET DEFAULT ON UPDATE CASCADE,
 	ADD CONSTRAINT fk_requests_urgency FOREIGN KEY (urgency_id) REFERENCES urgency (_id) ON DELETE SET DEFAULT ON UPDATE CASCADE,
 	ADD CONSTRAINT fk_requests_technicians FOREIGN KEY (technician_id) REFERENCES technicians (_id) ON DELETE SET NULL ON UPDATE CASCADE;
+
+CREATE FUNCTION notify_trigger() RETURNS trigger AS $$
+DECLARE
+BEGIN
+  PERFORM pg_notify('watchers', NEW._id::varchar );
+  RETURN new;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER watched_table_trigger AFTER INSERT ON requests
+FOR EACH ROW EXECUTE PROCEDURE notify_trigger();
 
 CREATE TABLE administrators (
 	_id									uuid DEFAULT gen_random_uuid() NOT NULL,

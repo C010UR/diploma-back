@@ -11,12 +11,13 @@ import cors from "cors";
 // Process requests
 import bodyParser from "body-parser";
 import multer from "multer";
+// Session
+import session from "express-session";
+import pgSession from "connect-pg-simple";
 // Local modules
-// import/no-cycle because request.js uses socket.io emit
-// eslint-disable-next-line import/no-cycle
 import mountRoutes from "./routers/index.js";
-import sessionMiddleware from "./middleware/sessionMiddleware.js";
 import log from "./logging.js";
+import pool from "./db/pool.js";
 
 const __dirname = path.resolve();
 
@@ -25,9 +26,21 @@ const upload = multer();
 const app = express();
 const server = createServer(app);
 
+export default server;
+
+const PgSession = pgSession(session);
+
+const sessionMiddleware = session({
+  store: new PgSession({ pool }),
+  secret: process.env.COOKIE_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 2592000000 } // 30 days
+});
+
 const middleware = [
   morgan(
-    "[:date[iso]] client: :remote-addr\nHTTP - :remote-user :method :url HTTP/:http-version :status :res[content-length]\n"
+    "[:date[iso]] Client: :remote-addr | HTTP\n:remote-user :method :url HTTP/:http-version :status :res[content-length]\n"
   ),
   express.json(),
   bodyParser.urlencoded({ extended: true }),
@@ -35,16 +48,19 @@ const middleware = [
   helmet(),
   compression(),
   sessionMiddleware,
-  cors({ allowedHeaders: "Content-Type, Cache-Control" })
+  cors({
+    allowedHeaders: "Content-Type, Cache-Control",
+    methods: ["GET", "POST", "PATCH", "DELETE"]
+  })
 ];
 
-app.use("/public", express.static(path.join(__dirname, "./public/")));
 app.use(middleware);
-
+app.use("/public", express.static(path.join(__dirname, "./public/")));
 mountRoutes(app);
 
 const io = new Server(server, {});
 
+// Socket.IO
 io.use((socket, next) => sessionMiddleware(socket.request, {}, next));
 io.on("connection", (socket) => {
   // On Connection set up the listeners
@@ -60,4 +76,12 @@ io.on("connection", (socket) => {
   }
 });
 
-export { server, io };
+pool.connect((error, client) => {
+  if (error) {
+    log("pool", "sql", error, true);
+  }
+  client.on("notification", (msg) => {
+    io.to("dashboard").emit("row:new", msg.payload);
+  });
+  return client.query("LISTEN watchers");
+});

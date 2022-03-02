@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import validator from "validator";
 import query from "../db/query.js";
 import log from "../logging.js";
+import isAuth from "../middleware/auth.js";
 
 const router = new Router();
 
@@ -28,7 +29,7 @@ router.post("/register", async (req, res) => {
     return res.status(201).send(login);
   } catch (error) {
     log(req.ip, "sql", error, true);
-    return res.status(500).end();
+    return res.status(400).end();
   }
 });
 
@@ -52,11 +53,11 @@ router.post("/login", async (req, res) => {
     return res.status(204).end();
   } catch (error) {
     log(req.ip, "sql", error, true);
-    return res.status(500).end();
+    return res.status(400).end();
   }
 });
 
-router.post("/logout", async (req, res) => {
+router.post("/logout", isAuth, async (req, res) => {
   req.session.destroy((error) => {
     if (error) {
       log(req.ip, "session", error, true);

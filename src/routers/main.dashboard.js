@@ -8,15 +8,6 @@ const router = new Router();
 
 export default router;
 
-function padStr(i) {
-  return i < 10 ? `0${i}` : `${i}`;
-}
-
-function dateToStr(date) {
-  // prettier-ignore
-  return `${padStr(date.getFullYear())}-${padStr(date.getMonth())}-${padStr(date.getDate())} ${padStr(date.getHours())}:${padStr(date.getMinutes())}`;
-}
-
 router.get("/table/count", isAuth, async (req, res) => {
   try {
     const { rows } = await query(
@@ -27,7 +18,7 @@ router.get("/table/count", isAuth, async (req, res) => {
     return res.status(200).send(rows[0]);
   } catch (error) {
     log(req.ip, "sql", error, true);
-    return res.status(500).end();
+    return res.status(400).end();
   }
 });
 
@@ -46,7 +37,7 @@ router.get("/table", isAuth, async (req, res) => {
         LEFT JOIN technicians ON (requests.technician_id = technicians._id)
         ORDER BY created_at DESC
         LIMIT $2
-        OFFSET $1`, // LIMIT OFFSET is bad but i'm too lazy and there will not be millions of rows
+        OFFSET $1`, // LIMIT OFFSET is bad but i'm too lazy and there will not be thousands of rows
       [(page - 1) * limit, limit]
     );
     for (let i = 0; i < data.length; i++) {
@@ -66,15 +57,11 @@ router.get("/table", isAuth, async (req, res) => {
           data[i].status = "status-none";
         }
       }
-      data[i].created_at = dateToStr(data[i].created_at);
-      if (data[i].done_at) {
-        data[i].done_at = dateToStr(data[i].done_at);
-      }
     }
     return res.status(200).send(data);
   } catch (error) {
     log(req.ip, "sql", error, true);
-    return res.status(500).end();
+    return res.status(400).end();
   }
 });
 
