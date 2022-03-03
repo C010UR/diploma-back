@@ -20,6 +20,9 @@ function filterBuilder(builder, filters) {
         case "like":
           builder.whereILike(filter.column, `%${filter.value}%`);
           break;
+        case "contains":
+          builder.where(filter.column, "@>", filter.value);
+          break;
         case ">":
         case "<":
         case ">=":
@@ -41,7 +44,7 @@ router.get("/table/count", isAuth, async (req, res) => {
       .count()
       .table("requests")
       .where((builder) => filterBuilder(builder, req.body.filters));
-    return res.status(200).send(data);
+    return res.status(200).send(data[0]);
   } catch (error) {
     log(req.ip, "sql", error, true);
     return res.status(400).end();
@@ -89,13 +92,14 @@ router.patch("/table", isAuth, async (req, res) => {
       validator.isUUID(form.id, 4) &&
       form.technician_id &&
       validator.isUUID(form.technician_id, 4) &&
-      form.performed_works
+      form.performed_works &&
+      Array.isArray(form.performed_works)
     )
   ) {
     return res.status(400).end();
   }
   try {
-    await await knex("requests")
+    await knex("requests")
       .update({
         done_at: "NOW()",
         technician_id: form.technician_id,

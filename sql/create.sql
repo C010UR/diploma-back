@@ -58,12 +58,20 @@ ALTER TABLE technicians
 INSERT INTO technicians (_id, _field)
 VALUES (uuid_nil(), '[Удалено]');
 
+CREATE TABLE common_works (
+	_id					uuid DEFAULT gen_random_uuid() NOT NULL,
+	_field			varchar(128)
+);
+
+ALTER TABLE common_works
+	ADD CONSTRAINT pk_common_works PRIMARY KEY (_id);
+
 CREATE TABLE requests (
 	_id									uuid DEFAULT gen_random_uuid() NOT NULL,
 	urgency_id					uuid DEFAULT (uuid_nil()) NOT NULL,
 	cabinet_id					uuid DEFAULT (uuid_nil()) NOT NULL,
 	technician_id				uuid,
-	performed_works			text,
+	performed_works			text[],
 	client							varchar(128) NOT NULL,
 	client_phone				varchar(32),
 	defects							text NOT NULL,

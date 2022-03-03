@@ -51,8 +51,10 @@ const middleware = [
   compression(),
   sessionMiddleware,
   cors({
+    origin: true,
     allowedHeaders: "Content-Type, Cache-Control",
-    methods: ["GET", "POST", "PATCH", "DELETE"]
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true
   })
 ];
 

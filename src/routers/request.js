@@ -56,10 +56,8 @@ router.post("/", async (req, res) => {
       form.client_name &&
       form.urgency &&
       validator.isUUID(form.urgency, 4) &&
-      form.urgency !== "00000000-0000-0000-0000-000000000000" &&
       form.cabinet &&
       validator.isUUID(form.cabinet, 4) &&
-      form.cabinet !== "00000000-0000-0000-0000-000000000000" &&
       form.defects
     )
   ) {
