@@ -66,6 +66,9 @@ CREATE TABLE common_works (
 ALTER TABLE common_works
 	ADD CONSTRAINT pk_common_works PRIMARY KEY (_id);
 
+INSERT INTO urgency (_id, _field)
+VALUES (uuid_nil(), '[Удалено]');
+
 CREATE TABLE requests (
 	_id									uuid DEFAULT gen_random_uuid() NOT NULL,
 	urgency_id					uuid DEFAULT (uuid_nil()) NOT NULL,
