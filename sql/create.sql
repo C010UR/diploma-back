@@ -129,7 +129,7 @@ CREATE VIEW view_requests AS
 SELECT 
 	requests._id,
 	CASE
-		WHEN requests.technician_id IS NOT NULL THEN '0:compeleted'
+		WHEN requests.technician_id IS NOT NULL THEN '0:completed'
 		WHEN (urgency._interval + created_at - NOW()) < interval '0 hours' THEN '1:expired'
 		WHEN (urgency._interval + created_at - NOW()) <= interval '1 hour' THEN '2:hour'
 		WHEN (urgency._interval + created_at - NOW()) <= interval '24 hours' THEN '3:day'

@@ -38,26 +38,27 @@ function filterBuilder(builder, filters) {
   });
 }
 
-router.get("/table/count", isAuth, async (req, res) => {
+router.post("/table/count", isAuth, async (req, res) => {
   try {
     const data = await knex("view_requests")
       .count()
-      .table("requests")
       .where((builder) => filterBuilder(builder, req.body.filters));
     return res.status(200).send(data[0]);
   } catch (error) {
     log(req.ip, "sql", error, true);
-    return res.status(400).end();
+    return res.status(400).send();
   }
 });
 
-router.get("/table", isAuth, async (req, res) => {
+router.post("/table", isAuth, async (req, res) => {
   const page = req.body.page ?? 1;
   const limit = req.body.limit ?? 50;
   const orderBy =
     req.body.orderBy && req.body.orderBy.toLowerCase() === "status" ? "status" : "created_at";
   const orderDirection =
-    req.body.orderDirection && req.body.orderDirection.toLowerCase() === "asc" ? "asc" : "desc";
+    req.body.orderDirection && req.body.orderDirection.toLowerCase() === "ascending"
+      ? "asc"
+      : "desc";
   try {
     const data = await knex("view_requests")
       .select(
