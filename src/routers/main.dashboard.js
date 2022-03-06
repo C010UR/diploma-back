@@ -18,7 +18,10 @@ function filterBuilder(builder, filters) {
           builder.whereBetween(filter.column, filter.value);
           break;
         case "like":
-          builder.whereILike(filter.column, `%${filter.value}%`);
+          builder.whereILike(
+            knex.raw(`LOWER("${filter.column}")`),
+            knex.raw(`'%' || LOWER('${filter.value}') || '%'`)
+          );
           break;
         case "contains":
           builder.where(filter.column, "@>", filter.value);
