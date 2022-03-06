@@ -1,8 +1,8 @@
 import knex from "knex";
 import { attachPaginate } from "knex-paginate";
-import { parse } from "pg-connection-string";
+import pgConString from "pg-connection-string";
 
-const pgconfig = parse(process.env.DATABASE_URL);
+const pgconfig = pgConString.parse(process.env.DATABASE_URL);
 
 pgconfig.ssl = { rejectUnauthorized: false };
 
