@@ -59,7 +59,7 @@ const middleware = [
 ];
 
 app.use(middleware);
-app.use("/public", express.static(path.join(__dirname, "./public/")));
+app.use("/", express.static(path.join(__dirname, "./public/")));
 mountRoutes(app);
 
 const io = new Server(server, {});

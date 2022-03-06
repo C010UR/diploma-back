@@ -40,17 +40,15 @@ router.post("/login", async (req, res) => {
     return res.status(401).end();
   }
   try {
-    const administratorPassword = await knex("administrators")
-      .select("_pass")
+    const administrator = await knex("administrators")
+      .select("_pass", "_id")
       .where("_login", login);
-    if (
-      administratorPassword.length === 0 ||
-      !(await bcrypt.compare(password, administratorPassword[0]._pass))
-    ) {
+    if (administrator.length === 0 || !(await bcrypt.compare(password, administrator[0]._pass))) {
       return res.status(401).end();
     }
     log(req.ip, "dashboard", "Successful authorization");
     req.session.isAuth = true;
+    req.session.administrator = administrator[0]._id;
     return res.status(204).end();
   } catch (error) {
     log(req.ip, "sql", error, true);

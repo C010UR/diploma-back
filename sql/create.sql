@@ -90,7 +90,6 @@ ALTER TABLE requests
 	ADD CONSTRAINT fk_requests_technicians FOREIGN KEY (technician_id) REFERENCES technicians (_id) ON DELETE SET NULL ON UPDATE CASCADE;
 
 CREATE FUNCTION notify_trigger() RETURNS trigger AS $$
-DECLARE
 BEGIN
   PERFORM pg_notify('watchers', NEW._id::varchar );
   RETURN new;
