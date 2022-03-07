@@ -200,16 +200,16 @@ router.post("/report", isAuth, async (req, res) => {
       { header: "Телефон", key: "client_phone", width: 16 },
       { header: "Неисправности", key: "defects", width: 60 }
     ];
-    sheet.addConditionalFormatting({
-      ref: "C1:C9999",
-      rules: [
-        createTextRule("Выполнено", "67c23a"),
-        createTextRule("Просрочено", "f56c6c"),
-        createTextRule("Меньше часа", "e6a23c"),
-        createTextRule("Меньше недели", "909399"),
-        createTextRule("Больше недели", "909399")
-      ]
-    });
+    // sheet.addConditionalFormatting({
+    //   ref: "C1:C9999",
+    //   rules: [
+    //     createTextRule("Выполнено", "67c23a"),
+    //     createTextRule("Просрочено", "f56c6c"),
+    //     createTextRule("Меньше часа", "e6a23c"),
+    //     createTextRule("Меньше недели", "909399"),
+    //     createTextRule("Больше недели", "909399")
+    //   ]
+    // });
     data.forEach((row) => {
       let status = "";
       switch (row.status) {
@@ -236,13 +236,13 @@ router.post("/report", isAuth, async (req, res) => {
       }
       sheet.addRow({
         created_at: new Date(row.created_at),
-        done_at: row.done_at ? new Date(row.done_at) : null,
+        done_at: row.done_at ? new Date(row.done_at) : "",
         status,
-        technician: row.technician ?? null,
-        performed_works: row.performed_works ? row.performed_works.join("; ") : null,
+        technician: row.technician ?? "",
+        performed_works: row.performed_works ? row.performed_works.join("; ") : "",
         cabinet: row.cabinet,
         client: row.client,
-        client_phone: row.client_phone ?? null,
+        client_phone: row.client_phone ?? "",
         defects: row.defects
       });
     });
