@@ -250,7 +250,7 @@ router.post("/report", isAuth, async (req, res) => {
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
-    res.setHeader("Content-Disposition", "attachment; filename=Отчет.xlsx");
+    res.setHeader("Content-Disposition", "attachment; filename=Report.xlsx");
     await workbook.xlsx.write(res);
     return res.status(200).end();
   } catch (error) {
