@@ -143,12 +143,10 @@ function createTextRule(text, color) {
 
 router.get("/report", [upload.array(), isAuth], async (req, res) => {
   try {
-    console.log(JSON.parse(req.query.filters));
-    const orderBy = req.body.orderBy ? req.body.orderBy : "created_at";
+    const params = JSON.parse(req.query.filters);
+    const orderBy = params.orderBy ? params.orderBy : "created_at";
     const orderDirection =
-      req.body.orderDirection && req.body.orderDirection.toLowerCase() === "ascending"
-        ? "asc"
-        : "desc";
+      params.orderDirection && params.orderDirection.toLowerCase() === "ascending" ? "asc" : "desc";
     const data = await knex("view_requests")
       .select(
         "created_at",
@@ -161,7 +159,7 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
         "client_phone",
         "defects"
       )
-      .where((builder) => filterBuilder(builder, req.body.filters))
+      .where((builder) => filterBuilder(builder, params.filters))
       .orderBy(orderBy, orderDirection);
     if (data.length === 0) {
       return res.status(400).end();
