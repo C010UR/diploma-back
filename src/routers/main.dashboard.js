@@ -168,13 +168,13 @@ router.post("/report", isAuth, async (req, res) => {
     workbook.created = new Date();
     workbook.modified = new Date();
     const sheet = workbook.addWorksheet("Отчет", {
-      properties: {
-        tabColor: "6d81a2"
-      },
-      pageSetup: {
-        paperSize: 9,
-        orientation: "portrait"
-      }
+      // properties: {
+      //   tabColor: "6d81a2"
+      // },
+      // pageSetup: {
+      //   paperSize: 9,
+      //   orientation: "portrait"
+      // }
       // headerFooter: {
       //   firstHeader: `Отчет по заявкам на ремонт. &IОтчет был сгенерирован ${dateToStr(new Date())}`
       // }
@@ -232,16 +232,27 @@ router.post("/report", isAuth, async (req, res) => {
         default:
           status = "Неизвестно";
       }
+      // sheet.addRow({
+      //   created_at: new Date(row.created_at),
+      //   done_at: row.done_at ? new Date(row.done_at) : "",
+      //   status,
+      //   technician: row.technician ?? "",
+      //   performed_works: row.performed_works ? row.performed_works.join("; ") : "",
+      //   cabinet: row.cabinet,
+      //   client: row.client,
+      //   client_phone: row.client_phone ?? "",
+      //   defects: row.defects
+      // });
       sheet.addRow({
-        created_at: new Date(row.created_at),
-        done_at: row.done_at ? new Date(row.done_at) : "",
-        status,
-        technician: row.technician ?? "",
-        performed_works: row.performed_works ? row.performed_works.join("; ") : "",
-        cabinet: row.cabinet,
-        client: row.client,
-        client_phone: row.client_phone ?? "",
-        defects: row.defects
+        created_at: "a",
+        done_at: "a",
+        status: "a",
+        technician: "a",
+        performed_works: "a",
+        cabinet: "a",
+        client: "a",
+        client_phone: "a",
+        defects: "a"
       });
     });
     res.setHeader(
