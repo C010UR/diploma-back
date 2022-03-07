@@ -163,123 +163,94 @@ router.get("/report", isAuth, async (req, res) => {
       return res.status(400).end();
     }
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Tutorials");
-    worksheet.columns = [
-      { header: "Id", key: "id", width: 5 },
-      { header: "Title", key: "title", width: 25 },
-      { header: "Description", key: "description", width: 25 },
-      { header: "Published", key: "published", width: 10 }
+    workbook.creator = "MTEC";
+    workbook.lastModifiedBy = "MTEC";
+    workbook.created = new Date();
+    workbook.modified = new Date();
+    const sheet = workbook.addWorksheet("Отчет", {
+      properties: {
+        tabColor: "6d81a2"
+      },
+      pageSetup: {
+        paperSize: 9,
+        orientation: "portrait"
+      },
+      headerFooter: {
+        firstHeader: `Отчет по заявкам на ремонт. &IОтчет был сгенерирован ${dateToStr(new Date())}`
+      }
+    });
+    sheet.columns = [
+      {
+        header: "Создано в",
+        key: "created_at",
+        width: 18
+      },
+      {
+        header: "Выполнено в",
+        key: "done_at",
+        width: 18
+      },
+      { header: "Статус", key: "status", width: 15 },
+      { header: "Мастер", key: "technician", width: 40 },
+      { header: "Проделанные работы", key: "performed_works", width: 60 },
+      { header: "Кабинет", key: "cabinet", width: 40 },
+      { header: "Заказчик", key: "client", width: 40 },
+      { header: "Телефон", key: "client_phone", width: 16 },
+      { header: "Неисправности", key: "defects", width: 60 }
     ];
-    // res is a Stream object
+    sheet.addConditionalFormatting({
+      ref: "C1:C9999",
+      rules: [
+        createTextRule("Выполнено", "67c23a"),
+        createTextRule("Просрочено", "f56c6c"),
+        createTextRule("Меньше часа", "e6a23c"),
+        createTextRule("Меньше недели", "909399"),
+        createTextRule("Больше недели", "909399")
+      ]
+    });
+    data.forEach((row) => {
+      let status = "";
+      switch (row.status) {
+        case "6:completed":
+          status = "Выполнено";
+          break;
+        case "1:expired":
+          status = "Просрочено";
+          break;
+        case "2:hour":
+          status = "Меньше часа";
+          break;
+        case "3:day":
+          status = "Меньше дня";
+          break;
+        case "4:week":
+          status = "Меньше недели";
+          break;
+        case "5:none":
+          status = "Больше недели";
+          break;
+        default:
+          status = "Неизвестно";
+      }
+      sheet.addRow({
+        created_at: new Date(row.created_at),
+        done_at: row.done_at ? new Date(row.done_at) : "",
+        status,
+        technician: row.technician ?? "",
+        performed_works: row.performed_works ? row.performed_works.join("; ") : "",
+        cabinet: row.cabinet,
+        client: row.client,
+        client_phone: row.client_phone ?? "",
+        defects: row.defects
+      });
+    });
     res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
-    res.setHeader("Content-Disposition", "attachment; filename=" + "tutorials.xlsx");
-    return workbook.xlsx.write(res).then(() => {
-      res.status(200).end();
-    });
-    // const workbook = new ExcelJS.Workbook();
-    // // workbook.creator = "MTEC";
-    // // workbook.lastModifiedBy = "MTEC";
-    // // workbook.created = new Date();
-    // // workbook.modified = new Date();
-    // const sheet =
-    //   workbook.addWorksheet(/*"Отчет", {
-    //   properties: {
-    //     tabColor: "6d81a2"
-    //   },
-    //   pageSetup: {
-    //     paperSize: 9,
-    //     orientation: "portrait"
-    //   }
-    //   headerFooter: {
-    //     firstHeader: `Отчет по заявкам на ремонт. &IОтчет был сгенерирован ${dateToStr(new Date())}`
-    //   }
-    // }*/);
-    // sheet.columns = [
-    //   {
-    //     header: "Создано в",
-    //     key: "created_at",
-    //     width: 18
-    //   },
-    //   {
-    //     header: "Выполнено в",
-    //     key: "done_at",
-    //     width: 18
-    //   },
-    //   { header: "Статус", key: "status", width: 15 },
-    //   { header: "Мастер", key: "technician", width: 40 },
-    //   { header: "Проделанные работы", key: "performed_works", width: 60 },
-    //   { header: "Кабинет", key: "cabinet", width: 40 },
-    //   { header: "Заказчик", key: "client", width: 40 },
-    //   { header: "Телефон", key: "client_phone", width: 16 },
-    //   { header: "Неисправности", key: "defects", width: 60 }
-    // ];
-    // // sheet.addConditionalFormatting({
-    // //   ref: "C1:C9999",
-    // //   rules: [
-    // //     createTextRule("Выполнено", "67c23a"),
-    // //     createTextRule("Просрочено", "f56c6c"),
-    // //     createTextRule("Меньше часа", "e6a23c"),
-    // //     createTextRule("Меньше недели", "909399"),
-    // //     createTextRule("Больше недели", "909399")
-    // //   ]
-    // // });
-    // data.forEach((row) => {
-    //   let status = "";
-    //   switch (row.status) {
-    //     case "6:completed":
-    //       status = "Выполнено";
-    //       break;
-    //     case "1:expired":
-    //       status = "Просрочено";
-    //       break;
-    //     case "2:hour":
-    //       status = "Меньше часа";
-    //       break;
-    //     case "3:day":
-    //       status = "Меньше дня";
-    //       break;
-    //     case "4:week":
-    //       status = "Меньше недели";
-    //       break;
-    //     case "5:none":
-    //       status = "Больше недели";
-    //       break;
-    //     default:
-    //       status = "Неизвестно";
-    //   }
-    //   // sheet.addRow({
-    //   //   created_at: new Date(row.created_at),
-    //   //   done_at: row.done_at ? new Date(row.done_at) : "",
-    //   //   status,
-    //   //   technician: row.technician ?? "",
-    //   //   performed_works: row.performed_works ? row.performed_works.join("; ") : "",
-    //   //   cabinet: row.cabinet,
-    //   //   client: row.client,
-    //   //   client_phone: row.client_phone ?? "",
-    //   //   defects: row.defects
-    //   // });
-    //   sheet.addRow({
-    //     created_at: "a",
-    //     done_at: "a",
-    //     status: "a",
-    //     technician: "a",
-    //     performed_works: "a",
-    //     cabinet: "a",
-    //     client: "a",
-    //     client_phone: "a",
-    //     defects: "a"
-    //   });
-    // });
-    // res.setHeader(
-    //   "Content-Type",
-    //   "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    // );
-    // res.setHeader("Content-Disposition", "attachment; filename=Report.xlsx");
-    // await workbook.xlsx.write(res);
-    // return res.status(200).end();
+    res.setHeader("Content-Disposition", "attachment; filename=Report.xlsx");
+    await workbook.xlsx.write(res);
+    return res.status(200).end();
   } catch (error) {
     log(req.ip, "sql", error, true);
     return res.status(400).end();
