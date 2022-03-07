@@ -162,7 +162,6 @@ router.post("/report", isAuth, async (req, res) => {
     if (data.length === 0) {
       return res.status(400).end();
     }
-    const fileName = `Отчет ${dateToStr(new Date())}`;
     const workbook = new ExcelJS.Workbook();
     workbook.creator = "MTEC";
     workbook.lastModifiedBy = "MTEC";
@@ -251,7 +250,7 @@ router.post("/report", isAuth, async (req, res) => {
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     );
-    res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);
+    res.setHeader("Content-Disposition", "attachment; filename=Отчет.xlsx");
     await workbook.xlsx.write(res);
     return res.status(200).end();
   } catch (error) {
