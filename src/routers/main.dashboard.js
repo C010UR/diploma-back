@@ -163,10 +163,10 @@ router.post("/report", isAuth, async (req, res) => {
       return res.status(400).end();
     }
     const workbook = new ExcelJS.Workbook();
-    workbook.creator = "MTEC";
-    workbook.lastModifiedBy = "MTEC";
-    workbook.created = new Date();
-    workbook.modified = new Date();
+    // workbook.creator = "MTEC";
+    // workbook.lastModifiedBy = "MTEC";
+    // workbook.created = new Date();
+    // workbook.modified = new Date();
     const sheet = workbook.addWorksheet("Отчет", {
       // properties: {
       //   tabColor: "6d81a2"
