@@ -252,7 +252,7 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
         defects: row.defects
       });
     });
-    sheet.getRow(1).font = { name: "Consolas", size: 14, bold: true };
+    sheet.getRow(1).font = { name: "Consolas", size: 12, bold: true };
     res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"

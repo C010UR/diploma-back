@@ -68,9 +68,5 @@ router.post("/logout", isAuth, async (req, res) => {
 });
 
 router.get("/check", async (req, res) => {
-  if (req.session.isAuth) {
-    res.status(200).send({ authorized: true });
-  } else {
-    res.status(200).send({ authorized: false });
-  }
+  res.status(200).send({ authorized: req.session.isAuth });
 });
