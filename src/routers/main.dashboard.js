@@ -19,10 +19,7 @@ function filterBuilder(builder, filters) {
           builder.whereBetween(filter.column, filter.value);
           break;
         case "like":
-          builder.whereILike(
-            knex.raw(`LOWER("${filter.column}")`),
-            knex.raw(`'%' || LOWER('${filter.value}') || '%'`)
-          );
+          builder.whereILike(filter.column, `%${filter.value.toLowerCase()}%`);
           break;
         case "contains":
           builder.where(filter.column, "@>", filter.value);
@@ -250,8 +247,11 @@ router.post("/report", isAuth, async (req, res) => {
         defects: row.defects
       });
     });
-    res.set("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-    res.set("Content-Disposition", `attachment; filename=${fileName}`);
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    );
+    res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);
     await workbook.xlsx.write(res);
     return res.status(200).end();
   } catch (error) {

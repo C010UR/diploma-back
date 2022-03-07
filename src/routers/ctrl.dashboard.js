@@ -14,7 +14,7 @@ async function getFromTable(req, res, table, isUrgency = false) {
       ? { value: "_id", label: "_field", interval: knex.raw("_interval::varchar") }
       : { value: "_id", label: "_field" };
     const data = await knex(table).select(select).offset(1);
-    res.set("Content-Type", "application/json");
+    res.setHeader("Content-Type", "application/json");
     res.status(200).send(data);
   } catch (error) {
     log(req.ip, "sql", error, true);
@@ -35,7 +35,7 @@ async function addRowTable(req, res, table, isUrgency = false) {
       ? { _field: req.body.field, _interval: req.body.interval }
       : { _field: req.body.field };
     await knex(table).insert(fields);
-    res.set("Content-Type", "application/json");
+    res.setHeader("Content-Type", "application/json");
     return res.status(200).end();
   } catch (error) {
     log(req.ip, "sql", error, true);
@@ -57,7 +57,7 @@ async function updateRowTable(req, res, table, isUrgency = false) {
       ? { _field: form.field, _interval: form.interval }
       : { _field: form.field };
     await knex(table).update(fields).where("_id", form.id);
-    res.set("Content-Type", "application/json");
+    res.setHeader("Content-Type", "application/json");
     return res.status(200).end();
   } catch (error) {
     log(req.ip, "sql", error, true);
