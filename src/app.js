@@ -10,7 +10,6 @@ import helmet from "helmet";
 import cors from "cors";
 // Process requests
 import bodyParser from "body-parser";
-import multer from "multer";
 // Session
 import session from "express-session";
 import pgSession from "connect-pg-simple";
@@ -22,7 +21,6 @@ import pool from "./db/pool.js";
 const __dirname = path.resolve();
 
 // Initializing
-const upload = multer();
 const app = express();
 const server = createServer(app);
 
