@@ -138,7 +138,7 @@ function createTextRule(text, color) {
   };
 }
 
-router.post("/report", isAuth, async (req, res) => {
+router.get("/report", isAuth, async (req, res) => {
   try {
     const orderBy = req.body.orderBy ? req.body.orderBy : "created_at";
     const orderDirection =
