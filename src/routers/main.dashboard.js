@@ -143,7 +143,7 @@ function createTextRule(text, color) {
 
 router.get("/report", [upload.array(), isAuth], async (req, res) => {
   try {
-    console.log(req.body);
+    console.log(JSON.parse(req.query.filters));
     const orderBy = req.body.orderBy ? req.body.orderBy : "created_at";
     const orderDirection =
       req.body.orderDirection && req.body.orderDirection.toLowerCase() === "ascending"
