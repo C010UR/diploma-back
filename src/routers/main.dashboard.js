@@ -174,23 +174,21 @@ router.post("/report", isAuth, async (req, res) => {
       pageSetup: {
         paperSize: 9,
         orientation: "portrait"
-      },
-      headerFooter: {
-        firstHeader: `Отчет по заявкам на ремонт. &IОтчет был сгенерирован ${dateToStr(new Date())}`
       }
+      // headerFooter: {
+      //   firstHeader: `Отчет по заявкам на ремонт. &IОтчет был сгенерирован ${dateToStr(new Date())}`
+      // }
     });
     sheet.columns = [
       {
         header: "Создано в",
         key: "created_at",
-        width: 18,
-        style: { numFmt: "dd/mm/yyyy hh:MM:ss" }
+        width: 18
       },
       {
         header: "Выполнено в",
         key: "done_at",
-        width: 18,
-        style: { numFmt: "dd/mm/yyyy hh:MM:ss" }
+        width: 18
       },
       { header: "Статус", key: "status", width: 15 },
       { header: "Мастер", key: "technician", width: 40 },
