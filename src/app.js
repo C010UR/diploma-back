@@ -46,7 +46,6 @@ const middleware = [
   ),
   express.json(),
   bodyParser.urlencoded({ extended: true }),
-  upload.array(),
   helmet(),
   compression(),
   sessionMiddleware,
