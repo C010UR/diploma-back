@@ -160,15 +160,15 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
       params.orderDirection && params.orderDirection.toLowerCase() === "ascending" ? "asc" : "desc";
     const data = await knex("view_requests")
       .select(
-        columns.created_at ? "created_at" : "",
-        columns.done_at ? "done_at" : "",
-        columns.status ? "status" : "",
-        columns.technician ? "technician" : "",
-        columns.performed_works ? "performed_works" : "",
-        columns.cabinet ? "cabinet" : "",
-        columns.client ? "client" : "",
-        columns.client_phone ? "client_phone" : "",
-        columns.defects ? "defects" : ""
+        columns.created_at ? "created_at" : undefined,
+        columns.done_at ? "done_at" : undefined,
+        columns.status ? "status" : undefined,
+        columns.technician ? "technician" : undefined,
+        columns.performed_works ? "performed_works" : undefined,
+        columns.cabinet ? "cabinet" : undefined,
+        columns.client ? "client" : undefined,
+        columns.client_phone ? "client_phone" : undefined,
+        columns.defects ? "defects" : undefined
       )
       .where((builder) => filterBuilder(builder, params.filters))
       .orderBy(orderBy, orderDirection);
@@ -204,60 +204,60 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
         key: "created_at",
         width: 18,
         style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
-      } : {},
+      } : undefined,
       columns.done_at ? {
         header: "Выполнено в",
         key: "done_at",
         width: 18,
         style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
-      } : {},
+      } : undefined,
       columns.status ? {
         header: "Статус",
         key: "status",
         width: 15,
         style: { font: defaultFont }
-      } : {},
+      } : undefined,
       columns.technician ? {
         header: "Мастер",
         key: "technician",
         width: 40,
         style: { font: defaultFont }
-      } : {},
+      } : undefined,
       columns.performed_works ? {
         header: "Проделанные работы",
         key: "performed_works",
         width: 60,
         style: { font: defaultFont }
-      } : {},
+      } : undefined,
       columns.cabinet ? {
         header: "Кабинет",
         key: "cabinet",
         width: 40,
         style: { font: defaultFont }
-      } : {},
+      } : undefined,
       columns.client ? {
         header: "Заказчик",
         key: "client",
         width: 40,
         style: { font: defaultFont }
-      } : {},
+      } : undefined,
       columns.client_phone ? {
         header: "Телефон",
         key: "client_phone",
         width: 16,
         style: { font: defaultFont }
-      } : {},
+      } : undefined,
       columns.defects ? {
         header: "Неисправности",
         key: "defects",
         width: 60,
         style: { font: defaultFont }
-      } : {}
+      } : undefined
     ];
     sheet.getRow(1).font = { bold: true };
     data.forEach((row) => {
       let status = "";
-      if (row.status) {
+      if (columns.status) {
         switch (row.status) {
           case "6:completed":
             status = "Выполнено";
@@ -293,17 +293,19 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
         defects: row.defects
       });
     });
-    sheet.addConditionalFormatting({
-      ref: `C1:C${sheet.rowCount}`,
-      rules: [
-        createTextRule("Выполнено", "67c23a"),
-        createTextRule("Просрочено", "f56c6c"),
-        createTextRule("Меньше часа", "e6a23c"),
-        createTextRule("Меньше часа", "6d81a2"),
-        createTextRule("Меньше недели", "909399"),
-        createTextRule("Больше недели", "909399")
-      ]
-    });
+    if (columns.status) {
+      sheet.addConditionalFormatting({
+        ref: `C1:C${sheet.rowCount}`,
+        rules: [
+          createTextRule("Выполнено", "67c23a"),
+          createTextRule("Просрочено", "f56c6c"),
+          createTextRule("Меньше часа", "e6a23c"),
+          createTextRule("Меньше часа", "6d81a2"),
+          createTextRule("Меньше недели", "909399"),
+          createTextRule("Больше недели", "909399")
+        ]
+      });
+    }
     res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
