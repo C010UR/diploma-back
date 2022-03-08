@@ -267,14 +267,9 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
       pageSetup: {
         paperSize: 9,
         orientation: "portrait"
-      },
-      headerFooter: {
-        firstHeader: `Отчет по заявкам на ремонт. &IОтчет был сгенерирован ${dateToStr(new Date())}`
       }
     });
-    // prettier-ignore
     sheet.columns = sheetColumns;
-    sheet.getRow(1).font = { bold: true };
     data.forEach((row) => {
       let status = "";
       if (columns.status) {
@@ -316,17 +311,23 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
     if (columns.status) {
       const statusColumn = sheet.getColumn("status").letter;
       sheet.addConditionalFormatting({
-        ref: `${statusColumn}1:${statusColumn}${sheet.rowCount}`,
+        ref: `${statusColumn}1:${statusColumn}${sheet.rowCount + 1}`,
         rules: [
           createTextRule("Выполнено", "67c23a"),
           createTextRule("Просрочено", "f56c6c"),
           createTextRule("Меньше часа", "e6a23c"),
-          createTextRule("Меньше часа", "6d81a2"),
+          createTextRule("Меньше дня", "6d81a2"),
           createTextRule("Меньше недели", "909399"),
           createTextRule("Больше недели", "909399")
         ]
       });
     }
+    sheet.spliceRows(1, 0, "Отчет");
+    sheet.getRow(1).values = ["Отчет"];
+    sheet.mergeCells("A1:I1");
+    sheet.getRow(2).font = { bold: true };
+    sheet.getRow(sheet.rowCount + 1).values = [`Отчет сформирован ${dateToStr(new Date())}.`];
+    sheet.mergeCells(`A${sheet.rowCount}:I${sheet.rowCount}`);
     res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
