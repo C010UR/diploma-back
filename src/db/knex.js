@@ -4,7 +4,9 @@ import pgConString from "pg-connection-string";
 
 const pgconfig = pgConString.parse(process.env.DATABASE_URL);
 
-pgconfig.ssl = { rejectUnauthorized: false };
+if (process.env.NODE_ENV === "production") {
+  pgconfig.ssl = { rejectUnauthorized: false };
+}
 
 const instance = knex({
   client: "pg",

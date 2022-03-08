@@ -1,10 +1,15 @@
 import pg from "pg";
 
-const pool = new pg.Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
+const connect = {
+  connectionString: process.env.DATABASE_URL
+};
+
+if (process.env.NODE_ENV === "production") {
+  connect.ssl = {
     rejectUnauthorized: false
-  }
-});
+  };
+}
+
+const pool = new pg.Pool(connect);
 
 export default pool;
