@@ -158,18 +158,15 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
     const orderBy = params.orderBy ? params.orderBy : "created_at";
     const orderDirection =
       params.orderDirection && params.orderDirection.toLowerCase() === "ascending" ? "asc" : "desc";
+    const selectColumns = [];
+    Object.keys(columns).forEach((key) => {
+      if (columns[key]) {
+        selectColumns.push(key);
+      }
+    });
     const data = await knex("view_requests")
-      .select(
-        columns.created_at ? "created_at" : undefined,
-        columns.done_at ? "done_at" : undefined,
-        columns.status ? "status" : undefined,
-        columns.technician ? "technician" : undefined,
-        columns.performed_works ? "performed_works" : undefined,
-        columns.cabinet ? "cabinet" : undefined,
-        columns.client ? "client" : undefined,
-        columns.client_phone ? "client_phone" : undefined,
-        columns.defects ? "defects" : undefined
-      )
+      .columns(selectColumns)
+      .select()
       .where((builder) => filterBuilder(builder, params.filters))
       .orderBy(orderBy, orderDirection);
     if (data.length === 0) {
