@@ -315,6 +315,7 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
     });
     if (columns.status) {
       const statusColumn = sheet.getColumn("status").letter;
+      console.log(`${statusColumn}:${statusColumn}${sheet.rowCount}`);
       sheet.addConditionalFormatting({
         ref: `${statusColumn}:${statusColumn}${sheet.rowCount}`,
         rules: [
