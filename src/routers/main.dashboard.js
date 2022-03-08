@@ -141,25 +141,34 @@ function createTextRule(text, color) {
 router.get("/report", [upload.array(), isAuth], async (req, res) => {
   try {
     let params = {};
+    let columns = {};
     try {
       params = JSON.parse(req.query.filters);
     } catch (error) {
       params = {};
+    }
+    try {
+      columns = JSON.parse(req.query.columns);
+      if (!Object.keys(columns).some((key) => columns[key])) {
+        throw new Error("No columns provided");
+      }
+    } catch (error) {
+      res.status(400).end();
     }
     const orderBy = params.orderBy ? params.orderBy : "created_at";
     const orderDirection =
       params.orderDirection && params.orderDirection.toLowerCase() === "ascending" ? "asc" : "desc";
     const data = await knex("view_requests")
       .select(
-        "created_at",
-        "done_at",
-        "status",
-        "technician",
-        "performed_works",
-        "cabinet",
-        "client",
-        "client_phone",
-        "defects"
+        columns.created_at ? "created_at" : "",
+        columns.done_at ? "done_at" : "",
+        columns.status ? "status" : "",
+        columns.technician ? "technician" : "",
+        columns.performed_works ? "performed_works" : "",
+        columns.cabinet ? "cabinet" : "",
+        columns.client ? "client" : "",
+        columns.client_phone ? "client_phone" : "",
+        columns.defects ? "defects" : ""
       )
       .where((builder) => filterBuilder(builder, params.filters))
       .orderBy(orderBy, orderDirection);
@@ -188,89 +197,92 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
       family: 1,
       size: 12
     };
+    // prettier-ignore
     sheet.columns = [
-      {
+      columns.created_at ? {
         header: "Создано в",
         key: "created_at",
         width: 18,
         style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
-      },
-      {
+      } : {},
+      columns.done_at ? {
         header: "Выполнено в",
         key: "done_at",
         width: 18,
         style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
-      },
-      {
+      } : {},
+      columns.status ? {
         header: "Статус",
         key: "status",
         width: 15,
         style: { font: defaultFont }
-      },
-      {
+      } : {},
+      columns.technician ? {
         header: "Мастер",
         key: "technician",
         width: 40,
         style: { font: defaultFont }
-      },
-      {
+      } : {},
+      columns.performed_works ? {
         header: "Проделанные работы",
         key: "performed_works",
         width: 60,
         style: { font: defaultFont }
-      },
-      {
+      } : {},
+      columns.cabinet ? {
         header: "Кабинет",
         key: "cabinet",
         width: 40,
         style: { font: defaultFont }
-      },
-      {
+      } : {},
+      columns.client ? {
         header: "Заказчик",
         key: "client",
         width: 40,
         style: { font: defaultFont }
-      },
-      {
+      } : {},
+      columns.client_phone ? {
         header: "Телефон",
         key: "client_phone",
         width: 16,
         style: { font: defaultFont }
-      },
-      {
+      } : {},
+      columns.defects ? {
         header: "Неисправности",
         key: "defects",
         width: 60,
         style: { font: defaultFont }
-      }
+      } : {}
     ];
     sheet.getRow(1).font = { bold: true };
     data.forEach((row) => {
       let status = "";
-      switch (row.status) {
-        case "6:completed":
-          status = "Выполнено";
-          break;
-        case "1:expired":
-          status = "Просрочено";
-          break;
-        case "2:hour":
-          status = "Меньше часа";
-          break;
-        case "3:day":
-          status = "Меньше дня";
-          break;
-        case "4:week":
-          status = "Меньше недели";
-          break;
-        case "5:none":
-          status = "Больше недели";
-          break;
-        default:
-          status = "Неизвестно";
+      if (row.status) {
+        switch (row.status) {
+          case "6:completed":
+            status = "Выполнено";
+            break;
+          case "1:expired":
+            status = "Просрочено";
+            break;
+          case "2:hour":
+            status = "Меньше часа";
+            break;
+          case "3:day":
+            status = "Меньше дня";
+            break;
+          case "4:week":
+            status = "Меньше недели";
+            break;
+          case "5:none":
+            status = "Больше недели";
+            break;
+          default:
+            status = "Неизвестно";
+        }
       }
       sheet.addRow({
-        created_at: new Date(row.created_at),
+        created_at: row.created_at ? new Date(row.created_at) : "",
         done_at: row.done_at ? new Date(row.done_at) : "",
         status,
         technician: row.technician ?? "",
