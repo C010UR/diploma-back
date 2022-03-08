@@ -314,8 +314,9 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
       });
     });
     if (columns.status) {
+      const statusColumn = sheet.getColumn("status").letter;
       sheet.addConditionalFormatting({
-        ref: `C1:C${sheet.rowCount}`,
+        ref: `${statusColumn}:${statusColumn}${sheet.rowCount}`,
         rules: [
           createTextRule("Выполнено", "67c23a"),
           createTextRule("Просрочено", "f56c6c"),
