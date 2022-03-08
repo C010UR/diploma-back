@@ -195,12 +195,17 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
         width: 18,
         style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
       },
-      { header: "Выполнено в", key: "done_at", width: 18 },
+      {
+        header: "Выполнено в",
+        key: "done_at",
+        width: 18,
+        style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
+      },
       {
         header: "Статус",
         key: "status",
         width: 15,
-        style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
+        style: { font: defaultFont }
       },
       {
         header: "Мастер",
@@ -239,6 +244,7 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
         style: { font: defaultFont }
       }
     ];
+    sheet.getRow(1).font = { bold: true };
     data.forEach((row) => {
       let status = "";
       switch (row.status) {
