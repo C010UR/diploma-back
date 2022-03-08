@@ -158,12 +158,95 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
     const orderBy = params.orderBy ? params.orderBy : "created_at";
     const orderDirection =
       params.orderDirection && params.orderDirection.toLowerCase() === "ascending" ? "asc" : "desc";
+
+    const defaultFont = {
+      name: "Times New Roman",
+      family: 1,
+      size: 12
+    };
+    const sheetColumns = [];
     const selectColumns = [];
     Object.keys(columns).forEach((key) => {
       if (columns[key]) {
         selectColumns.push(key);
+        switch (key) {
+          case "created_at":
+            sheetColumns.push({
+              header: "Создано в",
+              key: "created_at",
+              width: 18,
+              style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
+            });
+            break;
+          case "done_at":
+            sheetColumns.push({
+              header: "Выполнено в",
+              key: "done_at",
+              width: 18,
+              style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
+            });
+            break;
+          case "status":
+            sheetColumns.push({
+              header: "Статус",
+              key: "status",
+              width: 15,
+              style: { font: defaultFont }
+            });
+            break;
+          case "technician":
+            sheetColumns.push({
+              header: "Мастер",
+              key: "technician",
+              width: 40,
+              style: { font: defaultFont }
+            });
+            break;
+          case "performed_works":
+            sheetColumns.push({
+              header: "Проделанные работы",
+              key: "performed_works",
+              width: 60,
+              style: { font: defaultFont }
+            });
+            break;
+          case "cabinet":
+            sheetColumns.push({
+              header: "Кабинет",
+              key: "cabinet",
+              width: 40,
+              style: { font: defaultFont }
+            });
+            break;
+          case "client":
+            sheetColumns.push({
+              header: "Заказчик",
+              key: "client",
+              width: 40,
+              style: { font: defaultFont }
+            });
+            break;
+          case "client_phone":
+            sheetColumns.push({
+              header: "Телефон",
+              key: "client_phone",
+              width: 16,
+              style: { font: defaultFont }
+            });
+            break;
+          case "defects":
+            sheetColumns.push({
+              header: "Неисправности",
+              key: "defects",
+              width: 60,
+              style: { font: defaultFont }
+            });
+            break;
+          default:
+        }
       }
     });
+
     const data = await knex("view_requests")
       .columns(selectColumns)
       .select()
@@ -189,68 +272,8 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
         firstHeader: `Отчет по заявкам на ремонт. &IОтчет был сгенерирован ${dateToStr(new Date())}`
       }
     });
-    const defaultFont = {
-      name: "Times New Roman",
-      family: 1,
-      size: 12
-    };
     // prettier-ignore
-    sheet.columns = [
-      columns.created_at ? {
-        header: "Создано в",
-        key: "created_at",
-        width: 18,
-        style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
-      } : undefined,
-      columns.done_at ? {
-        header: "Выполнено в",
-        key: "done_at",
-        width: 18,
-        style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
-      } : undefined,
-      columns.status ? {
-        header: "Статус",
-        key: "status",
-        width: 15,
-        style: { font: defaultFont }
-      } : undefined,
-      columns.technician ? {
-        header: "Мастер",
-        key: "technician",
-        width: 40,
-        style: { font: defaultFont }
-      } : undefined,
-      columns.performed_works ? {
-        header: "Проделанные работы",
-        key: "performed_works",
-        width: 60,
-        style: { font: defaultFont }
-      } : undefined,
-      columns.cabinet ? {
-        header: "Кабинет",
-        key: "cabinet",
-        width: 40,
-        style: { font: defaultFont }
-      } : undefined,
-      columns.client ? {
-        header: "Заказчик",
-        key: "client",
-        width: 40,
-        style: { font: defaultFont }
-      } : undefined,
-      columns.client_phone ? {
-        header: "Телефон",
-        key: "client_phone",
-        width: 16,
-        style: { font: defaultFont }
-      } : undefined,
-      columns.defects ? {
-        header: "Неисправности",
-        key: "defects",
-        width: 60,
-        style: { font: defaultFont }
-      } : undefined
-    ];
+    sheet.columns = sheetColumns;
     sheet.getRow(1).font = { bold: true };
     data.forEach((row) => {
       let status = "";
