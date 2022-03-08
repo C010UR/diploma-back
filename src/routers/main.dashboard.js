@@ -193,68 +193,52 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
         header: "Создано в",
         key: "created_at",
         width: 18,
-        font: defaultFont
+        style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
       },
-      {
-        header: "Выполнено в",
-        key: "done_at",
-        width: 18,
-        font: defaultFont
-      },
+      { header: "Выполнено в", key: "done_at", width: 18 },
       {
         header: "Статус",
         key: "status",
-        width: 17,
-        font: defaultFont
+        width: 15,
+        style: { font: defaultFont, numFmt: "dd.mm.yyyy hh:MM" }
       },
       {
         header: "Мастер",
         key: "technician",
         width: 40,
-        font: defaultFont
+        style: { font: defaultFont }
       },
       {
         header: "Проделанные работы",
         key: "performed_works",
         width: 60,
-        font: defaultFont
+        style: { font: defaultFont }
       },
       {
         header: "Кабинет",
         key: "cabinet",
         width: 40,
-        font: defaultFont
+        style: { font: defaultFont }
       },
       {
         header: "Заказчик",
         key: "client",
         width: 40,
-        font: defaultFont
+        style: { font: defaultFont }
       },
       {
         header: "Телефон",
         key: "client_phone",
         width: 16,
-        font: defaultFont
+        style: { font: defaultFont }
       },
       {
         header: "Неисправности",
         key: "defects",
         width: 60,
-        font: defaultFont
+        style: { font: defaultFont }
       }
     ];
-    sheet.addConditionalFormatting({
-      ref: "C1:C9999",
-      rules: [
-        createTextRule("Выполнено", "67c23a"),
-        createTextRule("Просрочено", "f56c6c"),
-        createTextRule("Меньше часа", "e6a23c"),
-        createTextRule("Меньше часа", "6d81a2"),
-        createTextRule("Меньше недели", "909399"),
-        createTextRule("Больше недели", "909399")
-      ]
-    });
     data.forEach((row) => {
       let status = "";
       switch (row.status) {
@@ -291,7 +275,17 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
         defects: row.defects
       });
     });
-    sheet.getRow(1).font = { name: "Consolas", size: 12, bold: true };
+    sheet.addConditionalFormatting({
+      ref: `C1:C${sheet.rowCount}`,
+      rules: [
+        createTextRule("Выполнено", "67c23a"),
+        createTextRule("Просрочено", "f56c6c"),
+        createTextRule("Меньше часа", "e6a23c"),
+        createTextRule("Меньше часа", "6d81a2"),
+        createTextRule("Меньше недели", "909399"),
+        createTextRule("Больше недели", "909399")
+      ]
+    });
     res.setHeader(
       "Content-Type",
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
