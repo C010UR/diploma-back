@@ -1,15 +1,15 @@
 import Router from "express-promise-router";
 import bcrypt from "bcryptjs";
 import validator from "validator";
+import log4js from "log4js";
 import knex from "../db/knex.js";
-import { log } from "../log.js";
 import isAuth from "../middleware/auth.js";
 
 const router = new Router();
 
 export default router;
 
-router.post("/register", async (req, res) => {
+router.post("/register", async (req, res, next) => {
   const { login, password, secret_key: secretKey } = req.body;
   // validate input
   if (
@@ -25,15 +25,13 @@ router.post("/register", async (req, res) => {
       _login: login,
       _pass: hashedPassword
     });
-    log(req.ip, "dashboard", `Successful registration of ${login}`, true);
     return res.status(201).send(login);
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    return res.status(400).end();
+    return next(error);
   }
 });
 
-router.post("/login", async (req, res) => {
+router.post("/login", async (req, res, next) => {
   const { login, password } = req.body;
   // validate input
   if (!(login && password)) {
@@ -46,23 +44,22 @@ router.post("/login", async (req, res) => {
     if (administrator.length === 0 || !(await bcrypt.compare(password, administrator[0]._pass))) {
       return res.status(401).end();
     }
-    log(req.ip, "dashboard", "Successful authorization");
     req.session.isAuth = true;
     req.session.administrator = administrator[0]._id;
     return res.status(204).end();
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    return res.status(400).end();
+    return next(error);
   }
 });
 
-router.post("/logout", isAuth, async (req, res) => {
+const logger = log4js.getLogger("session");
+
+router.post("/logout", isAuth, async (req, res, next) => {
   req.session.destroy((error) => {
     if (error) {
-      log(req.ip, "session", error, true);
-      return res.status(500).end();
+      logger.error(`[${req.ip}] ${error}`);
+      return next(error);
     }
-    log(req.ip, "dashboard", "Successful logout");
     return res.status(204).end();
   });
 });

@@ -1,14 +1,13 @@
 import Router from "express-promise-router";
 import validator from "validator";
 import knex from "../db/knex.js";
-import { log } from "../log.js";
 import isAuth from "../middleware/auth.js";
 
 const router = new Router();
 
 export default router;
 
-async function getFromTable(req, res, table, isUrgency = false) {
+async function getFromTable(req, res, next, table, isUrgency = false) {
   try {
     const select = isUrgency
       ? { value: "_id", label: "_field", interval: knex.raw("_interval::varchar") }
@@ -17,12 +16,11 @@ async function getFromTable(req, res, table, isUrgency = false) {
     res.setHeader("Content-Type", "application/json");
     res.status(200).send(data);
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    res.status(500).end();
+    next();
   }
 }
 
-async function addRowTable(req, res, table, isUrgency = false) {
+async function addRowTable(req, res, next, table, isUrgency = false) {
   // validate input
   if (!req.body.field) {
     return res.status(400).end();
@@ -38,12 +36,11 @@ async function addRowTable(req, res, table, isUrgency = false) {
     res.setHeader("Content-Type", "application/json");
     return res.status(200).end();
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    return res.status(400).end();
+    return next();
   }
 }
 
-async function updateRowTable(req, res, table, isUrgency = false) {
+async function updateRowTable(req, res, next, table, isUrgency = false) {
   const form = req.body;
   // validate input
   if (!(form.id && validator.isUUID(form.id, 4) && form.field)) {
@@ -60,12 +57,11 @@ async function updateRowTable(req, res, table, isUrgency = false) {
     res.setHeader("Content-Type", "application/json");
     return res.status(200).end();
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    return res.status(400).end();
+    return next();
   }
 }
 
-async function deleteRowTable(req, res, table) {
+async function deleteRowTable(req, res, next, table) {
   // validate input
   if (!(req.body.id && validator.isUUID(req.body.id, 4))) {
     return res.status(400).end();
@@ -75,92 +71,91 @@ async function deleteRowTable(req, res, table) {
     res.set("Content-Type", "application/json");
     return res.status(200).end();
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    return res.status(400).end();
+    return next();
   }
 }
 
-router.get("/technicians", isAuth, async (req, res) => {
-  await getFromTable(req, res, "technicians");
+router.get("/technicians", isAuth, async (req, res, next) => {
+  await getFromTable(req, res, next, "technicians");
 });
 
-router.post("/technicians", isAuth, async (req, res) => {
-  await addRowTable(req, res, "technicians");
+router.post("/technicians", isAuth, async (req, res, next) => {
+  await addRowTable(req, res, next, "technicians");
 });
 
-router.patch("/technicians", isAuth, async (req, res) => {
-  await updateRowTable(req, res, "technicians");
+router.patch("/technicians", isAuth, async (req, res, next) => {
+  await updateRowTable(req, res, next, "technicians");
 });
 
-router.delete("/technicians", isAuth, async (req, res) => {
-  await deleteRowTable(req, res, "technicians");
+router.delete("/technicians", isAuth, async (req, res, next) => {
+  await deleteRowTable(req, res, next, "technicians");
 });
 
-router.get("/works", isAuth, async (req, res) => {
-  await getFromTable(req, res, "common_works");
+router.get("/works", isAuth, async (req, res, next) => {
+  await getFromTable(req, res, next, "common_works");
 });
 
-router.post("/works", isAuth, async (req, res) => {
-  await addRowTable(req, res, "common_works");
+router.post("/works", isAuth, async (req, res, next) => {
+  await addRowTable(req, res, next, "common_works");
 });
 
-router.patch("/works", isAuth, async (req, res) => {
-  await updateRowTable(req, res, "common_works");
+router.patch("/works", isAuth, async (req, res, next) => {
+  await updateRowTable(req, res, next, "common_works");
 });
 
-router.delete("/works", isAuth, async (req, res) => {
-  await deleteRowTable(req, res, "common_works");
+router.delete("/works", isAuth, async (req, res, next) => {
+  await deleteRowTable(req, res, next, "common_works");
 });
 
-router.get("/defects", isAuth, async (req, res) => {
-  await getFromTable(req, res, "common_defects");
+router.get("/defects", isAuth, async (req, res, next) => {
+  await getFromTable(req, res, next, "common_defects");
 });
 
-router.post("/defects", isAuth, async (req, res) => {
-  await addRowTable(req, res, "common_defects");
+router.post("/defects", isAuth, async (req, res, next) => {
+  await addRowTable(req, res, next, "common_defects");
 });
 
-router.patch("/defects", isAuth, async (req, res) => {
-  await updateRowTable(req, res, "common_defects");
+router.patch("/defects", isAuth, async (req, res, next) => {
+  await updateRowTable(req, res, next, "common_defects");
 });
 
-router.delete("/defects", isAuth, async (req, res) => {
-  await deleteRowTable(req, res, "common_defects");
+router.delete("/defects", isAuth, async (req, res, next) => {
+  await deleteRowTable(req, res, next, "common_defects");
 });
 
-router.get("/cabinets", isAuth, async (req, res) => {
-  await getFromTable(req, res, "cabinets");
+router.get("/cabinets", isAuth, async (req, res, next) => {
+  await getFromTable(req, res, next, "cabinets");
 });
 
-router.post("/cabinets", isAuth, async (req, res) => {
-  await addRowTable(req, res, "cabinets");
+router.post("/cabinets", isAuth, async (req, res, next) => {
+  await addRowTable(req, res, next, "cabinets");
 });
 
-router.patch("/cabinets", isAuth, async (req, res) => {
-  await updateRowTable(req, res, "cabinets");
+router.patch("/cabinets", isAuth, async (req, res, next) => {
+  await updateRowTable(req, res, next, "cabinets");
 });
 
-router.delete("/cabinets", isAuth, async (req, res) => {
-  await deleteRowTable(req, res, "cabinets");
+router.delete("/cabinets", isAuth, async (req, res, next) => {
+  await deleteRowTable(req, res, next, "cabinets");
 });
 
-router.get("/urgency", isAuth, async (req, res) => {
-  await getFromTable(req, res, "urgency", true);
+router.get("/urgency", isAuth, async (req, res, next) => {
+  await getFromTable(req, res, next, "urgency", true);
 });
 
-router.post("/urgency", isAuth, async (req, res) => {
-  await addRowTable(req, res, "urgency", true);
+router.post("/urgency", isAuth, async (req, res, next) => {
+  await addRowTable(req, res, next, "urgency", true);
 });
 
-router.patch("/urgency", isAuth, async (req, res) => {
-  await updateRowTable(req, res, "urgency", true);
+router.patch("/urgency", isAuth, async (req, res, next) => {
+  await updateRowTable(req, res, next, "urgency", true);
 });
 
-router.delete("/urgency", isAuth, async (req, res) => {
-  await deleteRowTable(req, res, "urgency");
+router.delete("/urgency", isAuth, async (req, res, next) => {
+  await deleteRowTable(req, res, next, "urgency");
 });
 
-router.get("/administrators", isAuth, async (req, res) => {
+router.get("/administrators", isAuth, async (req, res, next) => {
   try {
     const data = await knex("administrators").select({
       value: "_id",
@@ -169,12 +164,11 @@ router.get("/administrators", isAuth, async (req, res) => {
     });
     res.status(200).send(data);
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    res.status(500).end();
+    next();
   }
 });
 
-router.delete("/administrators", isAuth, async (req, res) => {
+router.delete("/administrators", isAuth, async (req, res, next) => {
   // validate input
   if (!(req.body.id && validator.isUUID(req.body.id, 4))) {
     return res.status(400).end();
@@ -184,7 +178,6 @@ router.delete("/administrators", isAuth, async (req, res) => {
     await knex("session").where(knex.raw("(sess->>'administrator')::uuid"), req.body.id).del();
     return res.status(200).end();
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    return res.status(400).end();
+    return next();
   }
 });

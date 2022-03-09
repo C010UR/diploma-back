@@ -4,7 +4,7 @@ import { createServer } from "http";
 import { Server } from "socket.io";
 import express from "express";
 // Middleware
-import morgan from "morgan";
+import log4js from "log4js";
 import compression from "compression";
 import helmet from "helmet";
 import cors from "cors";
@@ -15,7 +15,6 @@ import session from "express-session";
 import pgSession from "connect-pg-simple";
 // Local modules
 import mountRoutes from "./routers/index.js";
-import { log, dateToStr } from "./log.js";
 import pool from "./db/pool.js";
 
 const __dirname = path.resolve();
@@ -23,6 +22,16 @@ const __dirname = path.resolve();
 // Initializing
 const app = express();
 const server = createServer(app);
+log4js.configure({
+  appenders: {
+    console: { type: "console" }
+  },
+  categories: {
+    default: { appenders: ["console"], level: "info" }
+  }
+});
+const socketLogger = log4js.getLogger("socket.io");
+const pgLogger = log4js.getLogger("pg");
 
 export default server;
 
@@ -36,12 +45,13 @@ const sessionMiddleware = session({
   cookie: { maxAge: 2592000000 } // 30 days
 });
 
-morgan.token("time", () => dateToStr(new Date()));
+const httpLogFormat = "[:remote-addr] :status :method :url HTTP/:http-version (:response-timems)";
 
 const middleware = [
-  morgan(
-    "[:time] Address - :remote-addr | HTTP\n:remote-user :method :url HTTP/:http-version :status :res[content-length]\n"
-  ),
+  log4js.connectLogger(log4js.getLogger("http"), {
+    level: "auto",
+    format: httpLogFormat
+  }),
   express.json(),
   bodyParser.urlencoded({ extended: true }),
   helmet(),
@@ -65,9 +75,9 @@ const io = new Server(server, {});
 io.use((socket, next) => sessionMiddleware(socket.request, {}, next));
 io.on("connection", (socket) => {
   // On Connection set up the listeners
-  log(socket.handshake.address, "Socket.IO", `User ${socket.id} connected`);
+  socketLogger.info(`[${socket.handshake.address}] User ${socket.id} connected`);
   socket.on("disconnect", () => {
-    log(socket.handshake.address, "Socket.IO", `User ${socket.id} disconnected`);
+    socketLogger.info(`[${socket.handshake.address}] User ${socket.id} disconnected`);
   });
 
   if (socket.request.session.isAuth) {
@@ -79,7 +89,7 @@ io.on("connection", (socket) => {
 
 pool.connect((error, client) => {
   if (error) {
-    log("PG Pool", "sql", error, true);
+    pgLogger.error(error);
   }
   client.on("notification", (msg) => {
     io.to("dashboard").emit("row:new", msg.payload);

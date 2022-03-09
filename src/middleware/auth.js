@@ -1,11 +1,13 @@
-import { log } from "../log.js";
+import log4js from "log4js";
+
+const logger = log4js.getLogger("auth");
 
 export default function isAuth(req, res, next) {
   if (req.session.isAuth) {
-    log(req.ip, "dashboard", "Successful authentication");
+    logger.info(`[${req.ip}] Successful authentication`);
     next();
   } else {
-    log(req.ip, "dashboard", "Unsuccessful attempt to authenticate");
+    logger.warn(`[${req.ip}] Unsuccessful attempt to authenticate`);
     res.status(401).end();
   }
 }

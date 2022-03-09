@@ -4,7 +4,6 @@ import validator from "validator";
 import ExcelJS from "exceljs";
 import isAuth from "../middleware/auth.js";
 import knex from "../db/knex.js";
-import { log } from "../log.js";
 
 const upload = multer();
 
@@ -42,19 +41,18 @@ function filterBuilder(builder, filters) {
   });
 }
 
-router.post("/table/count", isAuth, async (req, res) => {
+router.post("/table/count", isAuth, async (req, res, next) => {
   try {
     const data = await knex("view_requests")
       .count()
       .where((builder) => filterBuilder(builder, req.body.filters));
     return res.status(200).send(data[0]);
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    return res.status(400).send();
+    return next();
   }
 });
 
-router.post("/table", isAuth, async (req, res) => {
+router.post("/table", isAuth, async (req, res, next) => {
   const page = req.body.page ?? 1;
   const limit = req.body.limit ?? 50;
   const orderBy = req.body.orderBy ? req.body.orderBy : "created_at";
@@ -82,12 +80,11 @@ router.post("/table", isAuth, async (req, res) => {
       .paginate({ perPage: limit, currentPage: page });
     return res.status(200).send(data.data);
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    return res.status(400).end();
+    return next();
   }
 });
 
-router.patch("/table", isAuth, async (req, res) => {
+router.patch("/table", isAuth, async (req, res, next) => {
   const form = req.body;
   // validate input
   if (
@@ -112,8 +109,7 @@ router.patch("/table", isAuth, async (req, res) => {
       .where("_id", form.id);
     return res.status(200).send(form);
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    return res.status(500).end();
+    return next();
   }
 });
 
@@ -138,7 +134,7 @@ function createTextRule(text, color) {
   };
 }
 
-router.get("/report", [upload.array(), isAuth], async (req, res) => {
+router.get("/report", [upload.array(), isAuth], async (req, res, next) => {
   try {
     let params = {};
     let columns = {};
@@ -338,7 +334,6 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
     await workbook.xlsx.write(res);
     return res.status(200).end();
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    return res.status(400).end();
+    return next();
   }
 });

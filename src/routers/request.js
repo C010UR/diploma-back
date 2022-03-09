@@ -1,13 +1,12 @@
 import Router from "express-promise-router";
 import validator from "validator";
 import knex from "../db/knex.js";
-import { log } from "../log.js";
 
 const router = new Router();
 
 export default router;
 
-router.get("/urgency", async (req, res) => {
+router.get("/urgency", async (req, res, next) => {
   try {
     const data = await knex("urgency")
       .select({
@@ -17,12 +16,11 @@ router.get("/urgency", async (req, res) => {
       .offset(1);
     res.status(200).send(data);
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    res.status(500).end();
+    next();
   }
 });
 
-router.get("/cabinets", async (req, res) => {
+router.get("/cabinets", async (req, res, next) => {
   try {
     const data = await knex("cabinets")
       .select({
@@ -32,23 +30,21 @@ router.get("/cabinets", async (req, res) => {
       .offset(1);
     res.status(200).send(data);
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    res.status(500).end();
+    next();
   }
 });
 
-router.get("/defects", async (req, res) => {
+router.get("/defects", async (req, res, next) => {
   try {
     const data = await knex("common_defects").select("_field").offset(1);
     const result = data.map((obj) => obj._field);
     res.status(200).send(result);
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    res.status(500).end();
+    next();
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", async (req, res, next) => {
   const form = req.body;
   // validate input
   if (
@@ -74,8 +70,7 @@ router.post("/", async (req, res) => {
       defect_description: form.defect_description
     });
   } catch (error) {
-    log(req.ip, "sql", error, true);
-    return res.status(500).end();
+    next();
   }
   return res.status(201).send(form);
 });
