@@ -326,7 +326,9 @@ router.get("/report", [upload.array(), isAuth], async (req, res) => {
     sheet.getRow(1).values = ["Отчет"];
     sheet.mergeCells("A1:I1");
     sheet.getRow(2).font = { bold: true };
-    sheet.getRow(sheet.rowCount + 1).values = [`Отчет сформирован ${dateToStr(new Date())}.`];
+    sheet.getRow(sheet.rowCount + 1).values = [
+      `Отчет сформирован ${dateToStr(new Date())}. Подпись: `
+    ];
     sheet.mergeCells(`A${sheet.rowCount}:I${sheet.rowCount}`);
     res.setHeader(
       "Content-Type",
