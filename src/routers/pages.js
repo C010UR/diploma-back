@@ -23,7 +23,7 @@ router.get("/support", (req, res) => {
   });
 });
 
-router.get("/dashboard", (req, res) => {
+router.get("*", (req, res) => {
   const fileName = "dashboard.html";
   res.sendFile(fileName, options, (err) => {
     if (err) {

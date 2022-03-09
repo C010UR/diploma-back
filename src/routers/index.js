@@ -7,9 +7,9 @@ import pages from "./pages.js";
 const path = "/support/api";
 
 export default function mount(app) {
-  app.use(pages);
   app.use(`${path}/request`, request);
   app.use(`${path}/dashboard`, dashboard);
   app.use(`${path}/dashboard/auth`, dashboardAuth);
   app.use(`${path}/dashboard/control`, dashboardCtrl);
+  app.use(pages);
 }
