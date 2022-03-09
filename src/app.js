@@ -79,7 +79,7 @@ io.on("connection", (socket) => {
 
 pool.connect((error, client) => {
   if (error) {
-    log("pool", "sql", error, true);
+    log("PG Pool", "sql", error, true);
   }
   client.on("notification", (msg) => {
     io.to("dashboard").emit("row:new", msg.payload);
