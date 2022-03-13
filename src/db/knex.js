@@ -3,6 +3,7 @@ import { attachPaginate } from "knex-paginate";
 import config from "../../knexfile.js";
 
 const instance = knex(config[process.env.NODE_ENV]);
+console.log(config[process.env.NODE_ENV]);
 
 attachPaginate();
 

@@ -8,6 +8,7 @@
     "knex:migrate": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:latest --esm --knexfile ./knexfile.js",
     "knex:rollback": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:rollback --all --esm --knexfile ./knexfile.js",
     "knex:seed": "node -r dotenv/config ./node_modules/knex/bin/cli.js seed:run --esm --knexfile ./knexfile.js",
+    "knex:init:prod": "knex migrate:init",
     "knex:migrate:prod": "knex --esm --knexfile ./knexfile.js migrate:latest",
     "knex:seed:prod": "knex --esm --knexfile ./knexfile.js seed:run --specific=_init.cjs",
     "start": "node src/index.js",
