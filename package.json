@@ -9,7 +9,7 @@
     "knex:rollback": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:rollback --all --esm --knexfile ./knexfile.js",
     "knex:seed": "node -r dotenv/config ./node_modules/knex/bin/cli.js seed:run --esm --knexfile ./knexfile.js",
     "knex:migrate:prod": "knex --esm migrate:latest",
-    "knex:seed:prod": "knex --esm seed:run -specific=_init.cjs",
+    "knex:seed:prod": "knex --esm seed:run --specific=_init.cjs",
     "start": "node src/index.js",
     "dev": "nodemon -r dotenv/config src/index.js",
     "test": "jest --watch --detect-open-handles --runInBand",
