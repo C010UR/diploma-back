@@ -12,9 +12,10 @@ import cors from "cors";
 import bodyParser from "body-parser";
 // Session
 import session from "express-session";
-import pgSession from "connect-pg-simple";
+import knexSession from "connect-session-knex";
 // Local modules
 import mountRoutes from "./routers/index.js";
+import knex from "./db/knex.js";
 import pool from "./db/pool.js";
 
 const __dirname = path.resolve();
@@ -35,10 +36,10 @@ const pgLogger = log4js.getLogger("pg");
 
 export default server;
 
-const PgSession = pgSession(session);
+const KnexStore = knexSession(session);
 
 const sessionMiddleware = session({
-  store: new PgSession({ pool }),
+  store: new KnexStore({ knex }),
   secret: process.env.COOKIE_SECRET,
   resave: false,
   saveUninitialized: false,
