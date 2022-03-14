@@ -30,16 +30,14 @@ export default {
     }
   },
   production: {
-    production: {
-      client: "postgresql",
-      connectionString: process.env.DATABASE_URL,
-      ssl: {
-        rejectUnauthorized: false
-      },
-      pool: { min: 2, max: 10 },
-      migrations: {
-        directory: join(__dirname, "../src/db/models/migrations")
-      }
+    client: "postgresql",
+    connectionString: process.env.DATABASE_URL,
+    ssl: {
+      rejectUnauthorized: false
+    },
+    pool: { min: 2, max: 10 },
+    migrations: {
+      directory: join(__dirname, "../src/db/models/migrations")
     },
     seeds: {
       directory: join(__dirname, "./src/db/models/seeds")
