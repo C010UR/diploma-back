@@ -3,6 +3,8 @@
  * @returns { Promise<void> }
  */
 exports.seed = async (knex) => {
+  await knex("administrators").del();
+  await knex("requests").del();
   async function insertNil(table, hasInterval) {
     await knex(table).del();
     await knex.raw(`
@@ -15,6 +17,4 @@ exports.seed = async (knex) => {
   await insertNil("common_defects");
   await insertNil("technicians");
   await insertNil("common_works");
-  await knex("administrators").del();
-  await knex("requests").del();
 };

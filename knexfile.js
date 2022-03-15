@@ -23,7 +23,7 @@ export default {
       connectionString: `${process.env.DATABASE_URL}-test`
     },
     migrations: {
-      directory: join(__dirname, "../src/db/models/migrations")
+      directory: join(__dirname, "./src/db/models/migrations")
     },
     seeds: {
       directory: join(__dirname, "./src/db/models/seeds")

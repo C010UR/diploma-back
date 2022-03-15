@@ -62,4 +62,4 @@ exports.up = (knex) =>
       );
     });
 
-exports.down = (knex) => knex.schema.dropTableIfExists("requests").dropView("view_requests");
+exports.down = (knex) => knex.schema.dropView("view_requests").dropTableIfExists("requests");

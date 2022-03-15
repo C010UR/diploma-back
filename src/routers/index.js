@@ -4,7 +4,7 @@ import dashboardAuth from "./auth.dashboard.js";
 import dashboardCtrl from "./ctrl.dashboard.js";
 import pages from "./pages.js";
 
-const path = "/support/api";
+const path = "/support/api/v1";
 
 export default function mount(app) {
   app.use(`${path}/request`, request);

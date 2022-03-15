@@ -1,7 +1,7 @@
 import pg from "pg";
 
 const connect = {
-  connectionString: process.env.DATABASE_URL
+  connectionString: `${process.env.DATABASE_URL}${process.env.NODE_ENV === "test" ? "-test" : ""}`
 };
 
 if (process.env.NODE_ENV === "production") {

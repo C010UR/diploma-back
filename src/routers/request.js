@@ -51,9 +51,9 @@ router.post("/", async (req, res, next) => {
     !(
       form.client_name &&
       form.urgency &&
-      validator.isUUID(form.urgency, 4) &&
+      validator.isUUID(form.urgency) &&
       form.cabinet &&
-      validator.isUUID(form.cabinet, 4) &&
+      validator.isUUID(form.cabinet) &&
       form.defects
     )
   ) {

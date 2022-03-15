@@ -1,4 +1,7 @@
 node_modules
+jest-html-reporters-attach
+
+jest_html_reporters.html
 
 # Logs
 logs

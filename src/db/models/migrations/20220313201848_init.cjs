@@ -14,10 +14,9 @@ exports.up = (knex) =>
       $$ LANGUAGE plpgsql;
     `);
 
-exports.down = (knex) => {
+exports.down = (knex) =>
   // prettier-ignore
   knex.schema
-    .raw("DROP EXTENSION IF EXISTS \"pgcrypto\"")
-    .raw("DROP EXTENSION IF EXISTS \"uuid-ossp\"")
-    .raw("DROP FUNCTION notify_trigger");
-};
+    .raw("DROP FUNCTION IF EXISTS notify_trigger;")
+    .raw("DROP EXTENSION IF EXISTS \"pgcrypto\";")
+    .raw("DROP EXTENSION IF EXISTS \"uuid-ossp\";");

@@ -46,13 +46,16 @@ const sessionMiddleware = session({
   cookie: { maxAge: 2592000000 } // 30 days
 });
 
-const httpLogFormat = "[:remote-addr] :status :method :url HTTP/:http-version (:response-timems)";
-
+if (process.env.NODE_ENV !== "test") {
+  const httpLogFormat = "[:remote-addr] :status :method :url HTTP/:http-version (:response-timems)";
+  app.use(
+    log4js.connectLogger(log4js.getLogger("http"), {
+      level: "auto",
+      format: httpLogFormat
+    })
+  );
+}
 const middleware = [
-  log4js.connectLogger(log4js.getLogger("http"), {
-    level: "auto",
-    format: httpLogFormat
-  }),
   express.json(),
   bodyParser.urlencoded({ extended: true }),
   helmet(),
@@ -65,7 +68,6 @@ const middleware = [
     credentials: true
   })
 ];
-
 app.use(middleware);
 app.use("/", express.static(path.join(__dirname, "./public/")));
 mountRoutes(app);

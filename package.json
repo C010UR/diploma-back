@@ -5,20 +5,17 @@
   "private": true,
   "main": "src/index.js",
   "scripts": {
-    "knex:migrate": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:latest --esm --knexfile ./knexfile.js",
-    "knex:rollback": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:rollback --all --esm --knexfile ./knexfile.js",
-    "knex:seed": "node -r dotenv/config ./node_modules/knex/bin/cli.js seed:run --esm --knexfile ./knexfile.js",
-    "knex:migrate:prod": "knex --esm --knexfile ./knexfile.js migrate:latest",
-    "knex:seed:prod": "knex --esm --knexfile ./knexfile.js seed:run --specific=_init.cjs",
+    "knex:migrate": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:latest --esm --knexfile ./knexfile.js --env=development",
+    "knex:rollback": "node -r dotenv/config ./node_modules/knex/bin/cli.js migrate:rollback --esm --knexfile ./knexfile.js --env=development",
+    "knex:seed": "node -r dotenv/config ./node_modules/knex/bin/cli.js seed:run --esm --knexfile ./knexfile.js --env=development",
+    "knex:migrate:prod": "knex --esm --knexfile ./knexfile.js migrate:latest --env=production",
+    "knex:seed:prod": "knex --esm --knexfile ./knexfile.js seed:run --specific=_init.cjs --env=production",
     "start": "node src/index.js",
-    "dev": "nodemon -r dotenv/config src/index.js",
-    "test": "jest --watch --detect-open-handles --runInBand",
+    "dev": "cross-env NODE_ENV=development nodemon -r dotenv/config src/index.js",
+    "test": "node -r dotenv/config --experimental-vm-modules ./node_modules/jest/bin/jest.js --maxWorkers=1 --expand",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "type": "module",
-  "jest": {
-    "testEnvironment": "node"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/C010UR/diploma-back.git"
@@ -53,11 +50,13 @@
     "validator": "^13.7.0"
   },
   "devDependencies": {
+    "cross-env": "^7.0.3",
     "dotenv": "^16.0.0",
     "eslint": "^8.8.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.25.4",
     "jest": "^27.5.1",
+    "jest-html-reporters": "^3.0.6",
     "nodemon": "^2.0.15",
     "prettier-eslint": "^13.0.0",
     "prettier-eslint-cli": "^5.0.1",
