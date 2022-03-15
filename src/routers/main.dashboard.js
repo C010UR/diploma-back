@@ -192,7 +192,7 @@ router.get("/report", [upload.array(), isAuth], async (req, res, next) => {
             break;
           case "technician":
             sheetColumns.push({
-              header: "Мастер",
+              header: "Исполнитель",
               key: "technician",
               width: 40,
               style: { font: defaultFont }
