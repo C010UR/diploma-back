@@ -7,23 +7,23 @@ const requestPath = "/support/api/v1/request";
 
 beforeAll(before);
 
-test("Should get urgencies", async () => {
+test("Должен получить срочности", async () => {
   const res = await await request(app).get(`${requestPath}/urgency`).expect(200);
   expect(res.body.length).toBe(5);
 });
 
-test("Should get cabinets", async () => {
+test("Должен получить кабинеты", async () => {
   const res = await request(app).get(`${requestPath}/cabinets`).expect(200);
   expect(res.body.length).toBe(33);
 });
 
-test("Should get common defects", async () => {
+test("Должен получить неисправности", async () => {
   const res = await request(app).get(`${requestPath}/defects`).expect(200);
   expect(res.body.length).toBe(7);
 });
 
-describe("Should send or reject support requests", () => {
-  test("With all values", async () => {
+describe("Должен отправить или отклонить заявку на неисправность", () => {
+  test("Со всеми возможными значениями", async () => {
     await request(app)
       .post(`${requestPath}`)
       .send({
@@ -37,7 +37,7 @@ describe("Should send or reject support requests", () => {
       .expect(201);
   });
 
-  it("Without unnecessary values", async () => {
+  it("Без необязательных значений", async () => {
     await request(app)
       .post(`${requestPath}`)
       .send({
@@ -49,7 +49,7 @@ describe("Should send or reject support requests", () => {
       .expect(201);
   });
 
-  it("Without necessary values", async () => {
+  it("Без обязательных значений", async () => {
     await request(app)
       .post(`${requestPath}`)
       .send({

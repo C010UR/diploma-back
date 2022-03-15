@@ -7,8 +7,8 @@ const requestPath = "/support/api/v1/dashboard/auth";
 
 beforeAll(before);
 
-describe("Should register or reject new administrator", () => {
-  it("With correct login, password and secret", async () => {
+describe("Должен зарегистрировать либо отказать в регистрации администратора", () => {
+  it("С достоверными логином, паролем и секретным ключом", async () => {
     await request(app)
       .post(`${requestPath}/register`)
       .send({
@@ -18,7 +18,7 @@ describe("Should register or reject new administrator", () => {
       })
       .expect(201);
   });
-  it("With correct login and secret and easy password", async () => {
+  it("С достоверными логином и секретным ключом, слишком простым паролем", async () => {
     await request(app)
       .post(`${requestPath}/register`)
       .send({
@@ -28,7 +28,7 @@ describe("Should register or reject new administrator", () => {
       })
       .expect(400);
   });
-  it("With correct login, password and not correct secret", async () => {
+  it("С достоверными логином, паролем и недостоверным секретным ключом", async () => {
     await request(app)
       .post(`${requestPath}/register`)
       .send({
@@ -38,7 +38,7 @@ describe("Should register or reject new administrator", () => {
       })
       .expect(400);
   });
-  it("With correct password and secret and existing login", async () => {
+  it("С достоверными паролем и секретным ключом, уже существующем логином", async () => {
     await request(app)
       .post(`${requestPath}/register`)
       .send({
@@ -50,8 +50,8 @@ describe("Should register or reject new administrator", () => {
   });
 });
 
-describe("Should or should not log in", () => {
-  it("With correct login and password", async () => {
+describe("Должен авторизоваться или отказать в авторизации администратора", () => {
+  it("С достоверными логином и паролем", async () => {
     await request(app)
       .post(`${requestPath}/login`)
       .send({
@@ -60,7 +60,7 @@ describe("Should or should not log in", () => {
       })
       .expect(204);
   });
-  it("With correct login and not correct password", async () => {
+  it("С достоверным логином и недостоверным паролем", async () => {
     await request(app)
       .post(`${requestPath}/login`)
       .send({
@@ -69,7 +69,7 @@ describe("Should or should not log in", () => {
       })
       .expect(401);
   });
-  it("With not correct login and correct password", async () => {
+  it("С недостоверным логином и достоверным паролем", async () => {
     await request(app)
       .post(`${requestPath}/login`)
       .send({
@@ -78,7 +78,7 @@ describe("Should or should not log in", () => {
       })
       .expect(401);
   });
-  it("With not correct login and password", async () => {
+  it("С недостоверным логином и паролем", async () => {
     await request(app)
       .post(`${requestPath}/login`)
       .send({
@@ -87,17 +87,17 @@ describe("Should or should not log in", () => {
       })
       .expect(401);
   });
-  it("Without password", async () => {
+  it("С достоверным логином и без пароля", async () => {
     await request(app)
       .post(`${requestPath}/login`)
       .send({
-        login: "test0"
+        login: "test"
       })
       .expect(401);
   });
 });
 
-test("Should log out", async () => {
+test("Должен удалить сессию", async () => {
   const res = await request(app)
     .post(`${requestPath}/login`)
     .send({
@@ -109,8 +109,8 @@ test("Should log out", async () => {
   await request(app).post(`${requestPath}/logout`).set("Cookie", cookie).expect(204);
 });
 
-describe("Should check if user is authorized", () => {
-  it("is authorized", async () => {
+describe("Должен проверить, авторизован ли пользователь", () => {
+  it("авторизован", async () => {
     const res = await request(app)
       .post(`${requestPath}/login`)
       .send({
@@ -122,7 +122,7 @@ describe("Should check if user is authorized", () => {
     const res2 = await request(app).get(`${requestPath}/check`).set("Cookie", cookie).expect(200);
     expect(res2.body.authorized).toBeTruthy();
   });
-  it("is not authorized", async () => {
+  it("не авторизован", async () => {
     const res2 = await request(app).get(`${requestPath}/check`).expect(200);
     expect(res2.body.authorized).toBeFalsy();
   });

@@ -46,7 +46,7 @@ router.post("/table/count", isAuth, async (req, res, next) => {
     const data = await knex("view_requests")
       .count()
       .where((builder) => filterBuilder(builder, req.body.filters));
-    return res.status(200).send(data[0]);
+    return res.status(200).send({ count: parseInt(data[0].count, 10) });
   } catch (error) {
     return next();
   }
@@ -107,7 +107,7 @@ router.patch("/table", isAuth, async (req, res, next) => {
         performed_works: form.performed_works
       })
       .where("_id", form.id);
-    return res.status(200).send(form);
+    return res.status(204).send();
   } catch (error) {
     return next();
   }

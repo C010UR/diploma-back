@@ -13,7 +13,6 @@ async function getFromTable(req, res, next, table, isUrgency = false) {
       ? { value: "_id", label: "_field", interval: knex.raw("_interval::varchar") }
       : { value: "_id", label: "_field" };
     const data = await knex(table).select(select).offset(1);
-    res.setHeader("Content-Type", "application/json");
     res.status(200).send(data);
   } catch (error) {
     next();
@@ -33,8 +32,7 @@ async function addRowTable(req, res, next, table, isUrgency = false) {
       ? { _field: req.body.field, _interval: req.body.interval }
       : { _field: req.body.field };
     await knex(table).insert(fields);
-    res.setHeader("Content-Type", "application/json");
-    return res.status(200).end();
+    return res.status(204).end();
   } catch (error) {
     return next();
   }
@@ -43,7 +41,7 @@ async function addRowTable(req, res, next, table, isUrgency = false) {
 async function updateRowTable(req, res, next, table, isUrgency = false) {
   const form = req.body;
   // validate input
-  if (!(form.id && validator.isUUID(form.id, 4) && form.field)) {
+  if (!(form.id && validator.isUUID(form.id) && form.field)) {
     return res.status(400).end();
   }
   if (isUrgency && !req.body.interval) {
@@ -54,8 +52,7 @@ async function updateRowTable(req, res, next, table, isUrgency = false) {
       ? { _field: form.field, _interval: form.interval }
       : { _field: form.field };
     await knex(table).update(fields).where("_id", form.id);
-    res.setHeader("Content-Type", "application/json");
-    return res.status(200).end();
+    return res.status(204).end();
   } catch (error) {
     return next();
   }
@@ -63,13 +60,12 @@ async function updateRowTable(req, res, next, table, isUrgency = false) {
 
 async function deleteRowTable(req, res, next, table) {
   // validate input
-  if (!(req.body.id && validator.isUUID(req.body.id, 4))) {
+  if (!(req.body.id && validator.isUUID(req.body.id))) {
     return res.status(400).end();
   }
   try {
     await knex(table).where("_id", req.body.id).del();
-    res.set("Content-Type", "application/json");
-    return res.status(200).end();
+    return res.status(204).end();
   } catch (error) {
     return next();
   }
@@ -175,8 +171,8 @@ router.delete("/administrators", isAuth, async (req, res, next) => {
   }
   try {
     await knex("administrators").where("_id", req.body.id).del();
-    await knex("session").where(knex.raw("(sess->>'administrator')::uuid"), req.body.id).del();
-    return res.status(200).end();
+    await knex("sessions").where(knex.raw("(sess->>'administrator')::uuid"), req.body.id).del();
+    return res.status(204).end();
   } catch (error) {
     return next();
   }
