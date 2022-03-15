@@ -90,9 +90,9 @@ router.patch("/table", isAuth, async (req, res, next) => {
   if (
     !(
       form.id &&
-      validator.isUUID(form.id, 4) &&
+      validator.isUUID(form.id) &&
       form.technician_id &&
-      validator.isUUID(form.technician_id, 4) &&
+      validator.isUUID(form.technician_id) &&
       form.performed_works &&
       Array.isArray(form.performed_works)
     )
