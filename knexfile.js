@@ -39,7 +39,7 @@ export default {
     },
     pool: { min: 2, max: 10 },
     migrations: {
-      directory: join(__dirname, "../src/db/models/migrations")
+      directory: join(__dirname, "./src/db/models/migrations")
     },
     seeds: {
       directory: join(__dirname, "./src/db/models/seeds")

@@ -6,6 +6,7 @@ exports.up = (knex) =>
     .raw("CREATE EXTENSION IF NOT EXISTS \"pgcrypto\";")
     .raw("CREATE EXTENSION IF NOT EXISTS \"uuid-ossp\";")
     .raw(`
+      DROP FUNCTION IF EXISTS notify_trigger;
       CREATE FUNCTION notify_trigger() RETURNS trigger AS $$
       BEGIN
         PERFORM pg_notify('watchers', NEW._id::varchar );
