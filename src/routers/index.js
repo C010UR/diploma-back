@@ -6,10 +6,10 @@ import pages from "./pages.js";
 
 const path = "/support/api/v1";
 
-export default function mount(app) {
+export default (app) => {
   app.use(`${path}/request`, request);
   app.use(`${path}/dashboard`, dashboard);
   app.use(`${path}/dashboard/auth`, dashboardAuth);
   app.use(`${path}/dashboard/control`, dashboardCtrl);
   app.use(pages);
-}
+};
