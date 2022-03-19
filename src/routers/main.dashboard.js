@@ -119,6 +119,16 @@ function padStr(i) {
 
 function dateToStr(date) {
   // prettier-ignore
+  return `${padStr(date.getFullYear())}-${padStr(date.getMonth())}-${padStr(date.getDate())}`;
+}
+
+function timeToStr(date) {
+  // prettier-ignore
+  return `${padStr(date.getHours())}:${padStr(date.getMinutes())}`;
+}
+
+function dateTimeToStr(date) {
+  // prettier-ignore
   return `${padStr(date.getFullYear())}-${padStr(date.getMonth())}-${padStr(date.getDate())} ${padStr(date.getHours())}:${padStr(date.getMinutes())}`;
 }
 
@@ -132,6 +142,26 @@ function createTextRule(text, color) {
       font: { color: { argb: "ffffff" } }
     }
   };
+}
+
+function convertHeaderFooter(str) {
+  const words = str.split(":");
+  return words
+    .map((el) => {
+      switch (el.toLowerCase()) {
+        case "date":
+          return dateToStr(new Date());
+        case "time":
+          return timeToStr(new Date());
+        case "datetime":
+          return dateTimeToStr(new Date());
+        case "colon":
+          return ":";
+        default:
+          return el;
+      }
+    })
+    .join("");
 }
 
 router.get("/report", [upload.array(), isAuth], async (req, res, next) => {
@@ -319,12 +349,10 @@ router.get("/report", [upload.array(), isAuth], async (req, res, next) => {
       });
     }
     sheet.spliceRows(1, 0, "Отчет");
-    sheet.getRow(1).values = ["Отчет"];
+    sheet.getRow(1).values = [convertHeaderFooter(process.env.EXCEL_HEADER)];
     sheet.mergeCells("A1:I1");
     sheet.getRow(2).font = { bold: true };
-    sheet.getRow(sheet.rowCount + 1).values = [
-      `Отчет сформирован ${dateToStr(new Date())}. Подпись: `
-    ];
+    sheet.getRow(sheet.rowCount + 1).values = [convertHeaderFooter(process.env.EXCEL_FOOTER)];
     sheet.mergeCells(`A${sheet.rowCount}:I${sheet.rowCount}`);
     res.setHeader(
       "Content-Type",
