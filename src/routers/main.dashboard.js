@@ -155,7 +155,7 @@ function convertHeaderFooter(str) {
           return timeToStr(new Date());
         case "datetime":
           return dateTimeToStr(new Date());
-        case "colon":
+        case "":
           return ":";
         default:
           return el;
@@ -272,7 +272,6 @@ router.get("/report", [upload.array(), isAuth], async (req, res, next) => {
         }
       }
     });
-
     const data = await knex("view_requests")
       .columns(selectColumns)
       .select()
