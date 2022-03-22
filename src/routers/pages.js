@@ -13,18 +13,18 @@ export default router;
 
 router.get("/support", (req, res, next) => {
   const fileName = "index.html";
-  res.sendFile(fileName, options, (err) => {
-    if (err) {
-      next();
+  res.sendFile(fileName, options, (error) => {
+    if (error) {
+      next(error);
     }
   });
 });
 
 router.get("*", (req, res, next) => {
   const fileName = "dashboard.html";
-  res.sendFile(fileName, options, (err) => {
-    if (err) {
-      next();
+  res.sendFile(fileName, options, (error) => {
+    if (error) {
+      next(error);
     }
   });
 });

@@ -15,28 +15,30 @@ function filterBuilder(builder, filters) {
   if (!filters) return;
   filters.forEach((filter) => {
     if (!filter.column || !filter.value) return;
+    // prettier-ignore
+    const column = knex.raw(`${filter.column}${filter.column === "created_at" || filter.column === "done_at" ? "::date" : ""}`);
     if (filter.operator) {
       switch (filter.operator.toLowerCase()) {
         case "between":
-          builder.whereBetween(filter.column, filter.value);
+          builder.whereBetween(column, filter.value);
           break;
         case "like":
-          builder.whereILike(filter.column, `%${filter.value.toLowerCase()}%`);
+          builder.whereILike(column, `%${filter.value.toLowerCase()}%`);
           break;
         case "contains":
-          builder.where(filter.column, "@>", filter.value);
+          builder.where(column, "@>", filter.value);
           break;
         case ">":
         case "<":
         case ">=":
         case "<=":
-          builder.where(filter.column, filter.operator, filter.value);
+          builder.where(column, filter.operator, filter.value);
           break;
         default:
-          builder.where(filter.column, filter.value);
+          builder.where(column, filter.value);
       }
     } else {
-      builder.where(filter.column, filter.value);
+      builder.where(column, filter.value);
     }
   });
 }
@@ -48,7 +50,7 @@ router.post("/table/count", isAuth, async (req, res, next) => {
       .where((builder) => filterBuilder(builder, req.body.filters));
     return res.status(200).send({ count: parseInt(data[0].count, 10) });
   } catch (error) {
-    return next();
+    return next(error);
   }
 });
 
@@ -80,7 +82,7 @@ router.post("/table", isAuth, async (req, res, next) => {
       .paginate({ perPage: limit, currentPage: page });
     return res.status(200).send(data.data);
   } catch (error) {
-    return next();
+    return next(error);
   }
 });
 
@@ -109,7 +111,7 @@ router.patch("/table", isAuth, async (req, res, next) => {
       .where("_id", form.id);
     return res.status(204).send();
   } catch (error) {
-    return next();
+    return next(error);
   }
 });
 
@@ -361,6 +363,6 @@ router.get("/report", [upload.array(), isAuth], async (req, res, next) => {
     await workbook.xlsx.write(res);
     return res.status(200).end();
   } catch (error) {
-    return next();
+    return next(error);
   }
 });

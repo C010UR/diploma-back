@@ -15,7 +15,7 @@ async function getFromTable(req, res, next, table, isUrgency = false) {
     const data = await knex(table).select(select).offset(1);
     res.status(200).send(data);
   } catch (error) {
-    next();
+    next(error);
   }
 }
 
@@ -34,7 +34,7 @@ async function addRowTable(req, res, next, table, isUrgency = false) {
     await knex(table).insert(fields);
     return res.status(204).end();
   } catch (error) {
-    return next();
+    return next(error);
   }
 }
 
@@ -54,7 +54,7 @@ async function updateRowTable(req, res, next, table, isUrgency = false) {
     await knex(table).update(fields).where("_id", form.id);
     return res.status(204).end();
   } catch (error) {
-    return next();
+    return next(error);
   }
 }
 
@@ -67,7 +67,7 @@ async function deleteRowTable(req, res, next, table) {
     await knex(table).where("_id", req.body.id).del();
     return res.status(204).end();
   } catch (error) {
-    return next();
+    return next(error);
   }
 }
 
@@ -160,7 +160,7 @@ router.get("/administrators", isAuth, async (req, res, next) => {
     });
     res.status(200).send(data);
   } catch (error) {
-    next();
+    next(error);
   }
 });
 
@@ -174,6 +174,6 @@ router.delete("/administrators", isAuth, async (req, res, next) => {
     await knex("sessions").where(knex.raw("(sess->>'administrator')::uuid"), req.body.id).del();
     return res.status(204).end();
   } catch (error) {
-    return next();
+    return next(error);
   }
 });
