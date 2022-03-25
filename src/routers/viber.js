@@ -19,11 +19,13 @@ function dateTimeToStr(date) {
 }
 
 async function sendNewRequestMessage(client) {
+  const request = await knex.table("requests").select().where("_id", client)[0];
   const subs = await knex.table("viber_subs").select();
   subs.forEach(async (sub) => {
+    // prettier-ignore
     await bot.sendMessage(
       { id: sub.val },
-      new viber.Message.Text(`${dateTimeToStr(new Date())} Пришла заявка на ремонт от ${client}`)
+      new viber.Message.Text(`${dateTimeToStr(new Date())} Пришла заявка на ремонт от ${request.client} в ${request.cabinet}. Указанные неисправности: ${request.defects}`)
     );
   });
 }
@@ -38,11 +40,18 @@ bot.onSubscribe(async (response) => {
   await knex.table("viber_subs").insert({ val: response.userProfile.id });
   say(
     response,
-    `Вы подписались на бота для сайта ${websiteLink} Данный бот будет уведомлять вас о новых заявках на ремонт.`
+    `Теперь вы подписаны на бота от ${websiteLink} Данный бот будет уведомлять вас о новых заявках на ремонт.`
   );
-  console.log("HERE");
 });
 
 bot.onUnsubscribe(async (user) => {
   await knex.table("viber_subs").where("val", user).del();
+  await bot.sendMessage({ id: user }, new viber.Message.Text("Подписка на бота приостановлена."));
+});
+
+bot.on(bot.BotEvents.MESSAGE_RECEIVED, (message, response) => {
+  say(
+    response,
+    "Извините, но данный бот служит только для уведомления о новых заявках на ремонт. Он не поддерживает разговор с пользователем"
+  );
 });
