@@ -62,7 +62,7 @@ const sessionMiddleware = session({
 
 // Add middleware
 app.use("/", express.static(path.join(__dirname, "./public/")));
-app.use("/viber/webhook", [bodyParser.text(), bot.middleware()]);
+app.use(process.env.VIBER_WEBHOOK, [bodyParser.text(), bot.middleware()]);
 const middleware = [
   helmet(),
   bodyParser.urlencoded({ extended: true }),
