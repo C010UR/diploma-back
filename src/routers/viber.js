@@ -36,15 +36,14 @@ function say(response, message) {
   response.send(new viber.Message.Text(message));
 }
 
-bot.onSubscribe((response) => {
+bot.onSubscribe(async (response) => {
   say(
     response,
     `Здравствуйте, вы подписались на бота для веб-сайта ${websiteLink} Данный бот будет уведомлять вас о новых заявках на ремонт.`
   );
-  knex.table("viber_subs").insert({ _id: response.id });
-  console.log(knex.table("viber_subs").insert({ _id: response.id }).toSQL());
+  await knex.table("viber_subs").insert({ _id: response.id });
 });
 
-bot.onUnsubscribe((user) => {
-  knex.table("viber_subs").where("_id", user).del();
+bot.onUnsubscribe(async (user) => {
+  await knex.table("viber_subs").where("_id", user).del();
 });
