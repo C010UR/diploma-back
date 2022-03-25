@@ -19,7 +19,9 @@ function dateTimeToStr(date) {
 }
 
 async function sendNewRequestMessage(client) {
+  console.log("SUCC");
   const subs = await knex.table("viber_subs").select();
+  console.log(subs);
   subs.forEach((sub) => {
     bot.sendMessage(
       { id: sub._id },
@@ -37,9 +39,9 @@ function say(response, message) {
 bot.onSubscribe((response) => {
   say(
     response,
-    `Здравствуйте, вы подписались на бота ${bot.name} для веб-сайта ${websiteLink}. Данный бот будет уведомлять вас о новых заявках на ремонт.`
+    `Здравствуйте, вы подписались на бота для веб-сайта ${websiteLink} Данный бот будет уведомлять вас о новых заявках на ремонт.`
   );
-  knex.table("viber_subs").insert(response.id);
+  knex.table("viber_subs").insert({ _id: response.id });
 });
 
 bot.onUnsubscribe((user) => {
