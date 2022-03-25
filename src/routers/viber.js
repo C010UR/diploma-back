@@ -15,20 +15,16 @@ function padStr(i) {
 
 function dateTimeToStr(date) {
   // prettier-ignore
-  return `${padStr(date.getFullYear())}-${padStr(date.getMonth())}-${padStr(date.getDate())} ${padStr(date.getHours())}:${padStr(date.getMinutes())}`;
+  return `${padStr(date.getDate())}/${padStr(date.getMonth())}/${padStr(date.getFullYear())} ${padStr(date.getHours())}:${padStr(date.getMinutes())}`;
 }
 
 async function sendNewRequestMessage(client) {
   const subs = await knex.table("viber_subs").select();
   subs.forEach(async (sub) => {
-    try {
-      await bot.sendMessage(
-        { id: sub.val },
-        new viber.Message.Text(`${dateTimeToStr(new Date())} Пришла заявка на ремонт от ${client}`)
-      );
-    } catch (error) {
-      console.log(error);
-    }
+    await bot.sendMessage(
+      { id: sub.val },
+      new viber.Message.Text(`${dateTimeToStr(new Date())} Пришла заявка на ремонт от ${client}`)
+    );
   });
 }
 
