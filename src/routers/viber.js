@@ -46,12 +46,7 @@ bot.onSubscribe(async (response) => {
 });
 
 bot.onUnsubscribe(async (user) => {
-  try {
-    await knex.table("viber_subs").where("val", user).del();
-    await bot.sendMessage({ id: user }, new viber.Message.Text("Подписка на бота приостановлена."));
-  } catch (error) {
-    console.log(error);
-  }
+  await knex.table("viber_subs").where("val", user).del();
 });
 
 bot.on(viber.Events.MESSAGE_RECEIVED, (message, response) => {
