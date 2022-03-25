@@ -19,16 +19,14 @@ function dateTimeToStr(date) {
 }
 
 async function sendNewRequestMessage(client) {
-  console.log(client);
-  const data = await knex.table("requests").select().where("_id", client);
-  console.log(data);
+  const data = await knex.table("view_requests").select().where("_id", client);
   const request = data[0];
   const subs = await knex.table("viber_subs").select();
   subs.forEach(async (sub) => {
     // prettier-ignore
     await bot.sendMessage(
       { id: sub.val },
-      new viber.Message.Text(`${dateTimeToStr(new Date())} Пришла заявка на ремонт от ${request.client} в ${request.cabinet}. Указанные неисправности: ${request.defects}`)
+      new viber.Message.Text(`${dateTimeToStr(new Date())} Пришла заявка на ремонт от ${request.client} в ${request.cabinet}. Указанные неисправности: ${request.defects}.`)
     );
   });
 }
