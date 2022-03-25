@@ -19,8 +19,8 @@ function dateTimeToStr(date) {
 }
 
 async function sendNewRequestMessage(client) {
+  console.log(client);
   const request = await knex.table("requests").select().where("_id", client)[0];
-  console.log(client, request);
   const subs = await knex.table("viber_subs").select();
   subs.forEach(async (sub) => {
     // prettier-ignore
