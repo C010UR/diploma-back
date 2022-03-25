@@ -42,6 +42,7 @@ bot.onSubscribe((response) => {
     `Здравствуйте, вы подписались на бота для веб-сайта ${websiteLink} Данный бот будет уведомлять вас о новых заявках на ремонт.`
   );
   knex.table("viber_subs").insert({ _id: response.id });
+  console.log(knex.table("viber_subs").insert({ _id: response.id }).toSQL());
 });
 
 bot.onUnsubscribe((user) => {
