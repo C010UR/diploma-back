@@ -10,9 +10,11 @@ const port = process.env.PORT;
 try {
   const server = app.listen(port, () => {
     logger.info(`Listening on port ${port}`);
-    bot
-      .setWebhook(`https://mtec-support.herokuapp.com${process.env.VIBER_WEBHOOK}`)
-      .catch((error) => logger.error(error));
+    if (process.env.NODE_ENV === "production") {
+      bot
+        .setWebhook(`https://mtec-support.herokuapp.com${process.env.VIBER_WEBHOOK}`)
+        .catch((error) => logger.error(error));
+    }
   });
   process.on("SIGTERM", () => {
     logger.warn("SIGTERM signal received: closing HTTP server");
