@@ -47,7 +47,8 @@
     "pg": "^8.7.3",
     "pg-connection-string": "^2.5.0",
     "socket.io": "^4.4.1",
-    "validator": "^13.7.0"
+    "validator": "^13.7.0",
+    "viber-bot": "^1.0.18"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

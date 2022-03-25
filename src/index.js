@@ -1,6 +1,7 @@
 #!/usr/bin/env/node
 import log4js from "log4js";
 import app from "./app.js";
+import { bot } from "./routers/viber.js";
 
 const logger = log4js.getLogger("server");
 
@@ -9,6 +10,7 @@ const port = process.env.PORT;
 try {
   const server = app.listen(port, () => {
     logger.info(`Listening on port ${port}`);
+    bot.setWebhook(process.env.BASE_URL);
   });
   process.on("SIGTERM", () => {
     logger.warn("SIGTERM signal received: closing HTTP server");

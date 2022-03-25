@@ -33,6 +33,7 @@ specifiers:
   socket.io: ^4.4.1
   supertest: ^6.2.2
   validator: ^13.7.0
+  viber-bot: ^1.0.18
 
 dependencies:
   bcryptjs: 2.4.3
@@ -56,6 +57,7 @@ dependencies:
   pg-connection-string: 2.5.0
   socket.io: 4.4.1
   validator: 13.7.0
+  viber-bot: 1.0.18
 
 devDependencies:
   cross-env: 7.0.3
@@ -1237,6 +1239,12 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /async/2.6.3:
+    resolution: {integrity: sha512-zflvls11DCy+dQWzTW2dzuilv8Z5X/pjfmZOWba6TNIVDm+2UDaJmXSOXlasHKfNBs8oo3M0aT50fDEWfKZjXg==}
+    dependencies:
+      lodash: 4.17.21
+    dev: false
+
   /async/3.2.3:
     resolution: {integrity: sha512-spZRyzKL5l5BZQrr/6m/SqFdBN0q3OCI0f9rjfBzCMBIP4p75P620rR3gTmaksNOhmzgdxcaxdNfMy6anrbM0g==}
     dev: false
@@ -1349,6 +1357,10 @@ packages:
   /big-integer/1.6.51:
     resolution: {integrity: sha512-GPEid2Y9QU1Exl1rpO9B2IPJGHPSupF5GnVIP0blYvNOMer2bTvSWs1jGOUg04hTmu67nmLsQ9TBo1puaotBHg==}
     engines: {node: '>=0.6'}
+    dev: false
+
+  /bignumber.js/9.0.2:
+    resolution: {integrity: sha512-GAcQvbpsM0pUb0zw1EI0KhQEZ+lRwR5fYaAp3vPOYuP7aDvGy6cVN6XHLauvF8SOga2y0dcLcjt3iQDTSEliyw==}
     dev: false
 
   /binary-extensions/2.2.0:
@@ -4071,6 +4083,12 @@ packages:
     hasBin: true
     dev: true
 
+  /json-bigint/1.0.0:
+    resolution: {integrity: sha512-SiPv/8VpZuWbvLSMtTDU8hEfrZWg/mH/nV/b4o0CYbSxu1UIQPLdwKOCIyLQX+VIPO5vrLX3i8qtqFyhdPSUSQ==}
+    dependencies:
+      bignumber.js: 9.0.2
+    dev: false
+
   /json-buffer/3.0.0:
     resolution: {integrity: sha1-Wx85evx11ne96Lz8Dkfh+aPZqJg=}
     dev: true
@@ -4608,6 +4626,15 @@ packages:
   /natural-compare/1.4.0:
     resolution: {integrity: sha1-Sr6/7tdUHywnrPspvbvRXI1bpPc=}
     dev: true
+
+  /needle/1.6.0:
+    resolution: {integrity: sha1-9SpYWJchIWGOAC+OY4TK2sItYk8=}
+    engines: {node: '>= 0.10.x'}
+    hasBin: true
+    dependencies:
+      debug: 2.6.9
+      iconv-lite: 0.4.24
+    dev: false
 
   /negotiator/0.6.3:
     resolution: {integrity: sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==}
@@ -6102,6 +6129,10 @@ packages:
     resolution: {integrity: sha512-WxONCrssBM8TSPRqN5EmsjVrsv4A8X12J4ArBiiayv3DyyG3ZlIg6yysuuSYdZsVz3TKcTg2fd//Ujd4CHV1iA==}
     dev: true
 
+  /underscore/1.13.2:
+    resolution: {integrity: sha512-ekY1NhRzq0B08g4bGuX4wd2jZx5GnKz6mKSqFL4nqBlfyMGiG10gDFhDTMEfYmDL6Jy0FUIZp7wiRB+0BP7J2g==}
+    dev: false
+
   /unique-string/2.0.0:
     resolution: {integrity: sha512-uNaeirEPvpZWSgzwsPGtU2zVSTrn/8L5q/IexZmH0eH6SA73CmAA5U4GwORTxQAZs95TAXLNqeLoPPNO5gZfWg==}
     engines: {node: '>=8'}
@@ -6205,6 +6236,18 @@ packages:
   /vary/1.1.2:
     resolution: {integrity: sha1-IpnwLG3tMNSllhsLn3RSShj2NPw=}
     engines: {node: '>= 0.8'}
+    dev: false
+
+  /viber-bot/1.0.18:
+    resolution: {integrity: sha512-/ZLR0Hq5gwB0KlOdbbqZWuo4rogmRJmaC68fVEVERAiMH4Mh67dmJTbRTrhBvfcR1XUgiArcurPzovvzNCWPwA==}
+    engines: {node: '>=5', npm: '>=3'}
+    dependencies:
+      async: 2.6.3
+      body-parser: 1.19.2
+      express: 4.17.3
+      json-bigint: 1.0.0
+      needle: 1.6.0
+      underscore: 1.13.2
     dev: false
 
   /vue-eslint-parser/2.0.3_eslint@5.16.0:

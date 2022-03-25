@@ -17,12 +17,17 @@ import knexSession from "connect-session-knex";
 import mountRoutes from "./routers/index.js";
 import knex from "./db/knex.js";
 import pool from "./db/pool.js";
+import { bot, sendNewRequestMessage } from "./routers/viber.js";
 
 const __dirname = path.resolve();
 
 // Initializing
 const app = express();
 const server = createServer(app);
+
+export default server;
+
+// Logging
 log4js.configure({
   appenders: {
     console: { type: "console" }
@@ -34,8 +39,17 @@ log4js.configure({
 const socketLogger = log4js.getLogger("socket.io");
 const pgLogger = log4js.getLogger("pg");
 
-export default server;
+if (process.env.NODE_ENV !== "test") {
+  const httpLogFormat = "[:remote-addr] :status :method :url HTTP/:http-version (:response-timems)";
+  app.use(
+    log4js.connectLogger(log4js.getLogger("http"), {
+      level: "auto",
+      format: httpLogFormat
+    })
+  );
+}
 
+// Sessions
 const KnexStore = knexSession(session);
 
 const sessionMiddleware = session({
@@ -46,19 +60,13 @@ const sessionMiddleware = session({
   cookie: { maxAge: 2592000000 } // 30 days
 });
 
-if (process.env.NODE_ENV !== "test") {
-  const httpLogFormat = "[:remote-addr] :status :method :url HTTP/:http-version (:response-timems)";
-  app.use(
-    log4js.connectLogger(log4js.getLogger("http"), {
-      level: "auto",
-      format: httpLogFormat
-    })
-  );
-}
+// Add middleware
+app.use("/", express.static(path.join(__dirname, "./public/")));
+app.use("/viber/webhook", [bodyParser.text(), bot.middleware()]);
 const middleware = [
-  express.json(),
-  bodyParser.urlencoded({ extended: true }),
   helmet(),
+  bodyParser.urlencoded({ extended: true }),
+  express.json(),
   compression(),
   sessionMiddleware,
   cors({
@@ -69,12 +77,11 @@ const middleware = [
   })
 ];
 app.use(middleware);
-app.use("/", express.static(path.join(__dirname, "./public/")));
 mountRoutes(app);
 
+// Socket.IO
 const io = new Server(server, {});
 
-// Socket.IO
 io.use((socket, next) => sessionMiddleware(socket.request, {}, next));
 io.on("connection", (socket) => {
   // On Connection set up the listeners
@@ -94,8 +101,9 @@ pool.connect((error, client) => {
   if (error) {
     pgLogger.error(error);
   }
-  client.on("notification", (msg) => {
+  client.on("notification", async (msg) => {
     io.to("dashboard").emit("row:new", msg.payload);
+    await sendNewRequestMessage(msg.payload);
   });
   return client.query("LISTEN watchers");
 });
