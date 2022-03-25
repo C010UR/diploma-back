@@ -38,7 +38,7 @@ bot.onSubscribe(async (response) => {
   await knex.table("viber_subs").insert({ val: response.userProfile.id });
   say(
     response,
-    `Вы подписались на бота для веб-сайта ${websiteLink} Данный бот будет уведомлять вас о новых заявках на ремонт.`
+    `Вы подписались на бота для сайта ${websiteLink} Данный бот будет уведомлять вас о новых заявках на ремонт.`
   );
   console.log("HERE");
 });
