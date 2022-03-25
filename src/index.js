@@ -1,4 +1,6 @@
 #!/usr/bin/env/node
+import path from "path";
+
 import log4js from "log4js";
 import app from "./app.js";
 import { bot } from "./routers/viber.js";
@@ -15,7 +17,7 @@ process.on("unhandledRejection", (reason, p) => {
 try {
   const server = app.listen(port, () => {
     logger.info(`Listening on port ${port}`);
-    bot.setWebhook(process.env.EXPOSE_URL + process.env.VIBER_WEBHOOK);
+    bot.setWebhook(path.join(process.env.BASE_URL, process.env.VIBER_WEBHOOK));
   });
   process.on("SIGTERM", () => {
     logger.warn("SIGTERM signal received: closing HTTP server");
