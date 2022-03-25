@@ -49,7 +49,7 @@ bot.onUnsubscribe(async (user) => {
   await bot.sendMessage({ id: user }, new viber.Message.Text("Подписка на бота приостановлена."));
 });
 
-bot.on(bot.Events.MESSAGE_RECEIVED, (message, response) => {
+bot.on(viber.Events.MESSAGE_RECEIVED, (message, response) => {
   say(
     response,
     "Извините, но данный бот служит только для уведомления о новых заявках на ремонт. Он не поддерживает разговор с пользователем"
