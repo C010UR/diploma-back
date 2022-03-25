@@ -20,11 +20,15 @@ function dateTimeToStr(date) {
 
 async function sendNewRequestMessage(client) {
   const subs = await knex.table("viber_subs").select();
-  subs.forEach((sub) => {
-    bot.sendMessage(
-      { id: sub._id },
-      new viber.Message.Text(`${dateTimeToStr(new Date())} Пришла заявка на ремонт от ${client}`)
-    );
+  subs.forEach(async (sub) => {
+    try {
+      await bot.sendMessage(
+        { id: sub.val },
+        new viber.Message.Text(`${dateTimeToStr(new Date())} Пришла заявка на ремонт от ${client}`)
+      );
+    } catch (error) {
+      console.log(error);
+    }
   });
 }
 
