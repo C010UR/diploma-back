@@ -7,15 +7,12 @@ const logger = log4js.getLogger("server");
 
 const port = process.env.PORT;
 
-process.on("unhandledRejection", (reason, p) => {
-  logger.error("Unhandled Rejection at: Promise", p, "reason:", reason);
-  // application specific logging, throwing an error, or other logic here
-});
-
 try {
   const server = app.listen(port, () => {
     logger.info(`Listening on port ${port}`);
-    bot.setWebhook(`https://mtec-support.herokuapp.com${process.env.VIBER_WEBHOOK}`);
+    bot
+      .setWebhook(`https://mtec-support.herokuapp.com${process.env.VIBER_WEBHOOK}`)
+      .catch((error) => logger.error(error));
   });
   process.on("SIGTERM", () => {
     logger.warn("SIGTERM signal received: closing HTTP server");
