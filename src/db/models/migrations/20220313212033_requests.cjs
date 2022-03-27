@@ -3,8 +3,8 @@ exports.up = (knex) =>
   knex.schema
     .createTable("requests", (table) => {
       table.uuid("_id").defaultTo(knex.raw("gen_random_uuid()")).notNullable();
-      table.uuid("urgency_id").notNullable();
-      table.uuid("cabinet_id").notNullable();
+      table.uuid("urgency_id").notNullable().defaultTo(knex.raw("uuid_nil()"));
+      table.uuid("cabinet_id").notNullable().defaultTo(knex.raw("uuid_nil()"));
       table.uuid("technician_id");
       table.specificType("performed_works", "text[]");
       table.string("client", 64).notNullable();
